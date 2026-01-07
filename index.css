@@ -1,0 +1,284 @@
+/* index.css - Version: 3.0.7 */
+/* ✅ СОРТИРОВКА + ДУБЛИ УДАЛЕНЫ + CSS GRID */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0; background: #111; color: #fff; font-family: sans-serif;
+  max-width: 500px; min-width: 320px; min-height: 100vh; margin: auto;
+}
+
+/* ════════════════════════════════════════════════════ */
+/* 1. ОСНОВНАЯ СТРУКТУРА */
+/* ════════════════════════════════════════════════════ */
+.wrap { display: flex; flex-direction: column; height: 100vh; position: relative; }
+
+.top-bar {
+  height: 70px; background: #444; display: flex; align-items: center;
+  justify-content: flex-end; padding: 0 12px; font-size: 14px;
+}
+
+/* ════════════════════════════════════════════════════ *//* 2. КОНТРОЛЫ ТОП-БАРА */
+/* ════════════════════════════════════════════════════ */.top-controls { display: flex; align-items: center; gap: 8px; }
+
+.random-CheckBox { display: flex; align-items: center; gap: 4px; }
+.random-label { opacity: 0.9; }
+.random-max-input {
+  width: 40px; padding: 2px 4px; font-size: 12px; border-radius: 4px;
+  border: 1px solid #666; text-align: center; background: #333; color: #fff;
+}
+
+.switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer; inset: 0; background-color: #777;
+  border-radius: 18px; transition: 0.2s;
+}
+.slider:before {
+  position: absolute; content: ""; height: 14px; width: 14px; left: 2px;
+  bottom: 2px; background-color: white; border-radius: 50%; transition: 0.2s;
+}
+.switch input:checked + .slider { background-color: #4caf50; }
+.switch input:checked + .slider:before { transform: translateX(18px); }
+
+.show-random-CheckBox span { font-size: 12px; opacity: 0.9; }
+
+/* ════════════════════════════════════════════════════ *//* 3. INFO-GAME (центр экрана) */
+/* ════════════════════════════════════════════════════ */.info-game {
+  position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+  width: 100%; display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-start; z-index: 10; pointer-events: none; padding: 10px 0;
+}
+.info-game::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  z-index: -1;
+}
+
+.time {
+  font-family: "Roboto", sans-serif; font-weight: 100; line-height: 1;
+  width: 33vw; max-width: 25vw; font-size: clamp(10vh, 13vh, 10vh);
+  text-align: center; margin-bottom: 0vh;
+}
+
+.board-number {
+  position: absolute; top: 10px; right: 10px; font-size: 4vh; font-weight: 400;
+  opacity: 0.9; padding: 6px 10px; border-radius: 20px; z-index: 15;
+  font-family: "Roboto", sans-serif; pointer-events: none;
+}
+
+.bets {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  gap: 2vw; width: 100%; margin-top: -14px;
+  filter: drop-shadow(0.12vh 0.3vh 0.4vh rgba(0, 0, 0, 0.6));
+  cursor: pointer; /* ✅ Курсор */
+  transition: transform 0.1s;
+}
+.bets:hover {
+  transform: scale(1.02); /* ✅ Лёгкая анимация */
+}
+
+.bets-icon, .bets-value {
+  pointer-events: auto !important; /* ✅ Разрешаем клики */
+}
+.bets-left-percent, .bets-right-percent {
+  font-family: "Roboto", sans-serif; font-weight: 900; font-size: 5vh; opacity: 0.9;
+}
+.bets-left-percent { color: #f8a624; }
+.bets-right-percent { color: #5dadec; }
+.bets-left-percent.hidden, .bets-right-percent.hidden { visibility: hidden; }
+
+.bets-icon { width: auto; height: clamp(11vh, 8vh, 15vh); }
+.bets-value {
+  font-family: "Roboto", sans-serif; font-weight: 900; font-size: clamp(15vh, 13vh, 18vh);
+  line-height: 1;
+  cursor: pointer; /* ✅ Курсор */
+}
+
+/* ════════════════════════════════════════════════════ *//* 4. ИГРОВОЕ ПОЛЕ */
+/* ════════════════════════════════════════════════════ */.sides {
+  position: relative; flex: 1; display: flex; max-width: 500px;
+  padding-bottom: 140px; min-height: calc(100vh - 60px - 190px);
+}
+
+.side {
+  flex: 1; display: flex; flex-direction: column; align-items: stretch;
+  justify-content: stretch; cursor: pointer; transition: all 0.2s; position: relative;
+  max-width: 250px;
+}
+.left { background: #5dadec; }
+.right { background: #f8a624; }
+.side.winner { filter: brightness(1.2); box-shadow: inset 0 0 0 8px #4caf50; }
+
+.side-inner { display: flex; flex-direction: column; width: 100%; height: 100%; }
+.side-gap { flex: 1 0 0; }
+.side-gap-down {}
+.side-content {
+  flex: 2 0 0; display: flex; flex-direction: column; align-items: center;
+  justify-content: space-between; gap: 4px; height: 100%; padding: 8px 0;
+}
+
+.side-results {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; width: 100%;
+}
+.side-final-bets {
+  opacity: 0.95; display: inline-flex; align-items: center;
+  justify-content: center; gap: 2.5vw;
+}
+.side-final-bets.hidden { display: none; }
+.side-final-bets-value {
+  font-family: "Roboto", sans-serif; font-weight: 900; font-size: 12vh; line-height: 1;
+}
+
+.sticker { width: 50%; max-width: 100%; height: auto; object-fit: contain; }
+
+.side-player-bets {
+  flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;
+}
+.side-taps {
+  opacity: 0.9; display: inline-flex; align-items: center;
+  justify-content: center; gap: 2.5vh;
+}
+.side-taps.hidden { visibility: hidden; }
+.side-taps-value {
+  font-family: "Roboto", sans-serif; font-weight: 900; font-size: 11vh; line-height: 1;
+}
+
+/* ════════════════════════════════════════════════════ *//* 5. НИЖНИЕ ПАНЕЛИ (CSS GRID) */
+/* ════════════════════════════════════════════════════ *//* 5. НИЖНИЕ ПАНЕЛИ (CSS GRID - 3 ПАНЕЛИ) */
+.bottom-bars {
+  position: fixed; bottom: 0; left: 0; right: 0; max-width: 500px; margin: 0 auto;
+  display: grid; 
+  grid-template-rows: 7vh 8vh 8vh;     /* ⭐ 3 строки! */
+  gap: 0; height: 23vh; z-index: 20;
+}
+
+.player-balance-bar { grid-row: 1; }
+.super-prizes-bar { grid-row: 2; }
+.menu-bar { grid-row: 3; }
+
+.player-balance-bar {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+  display: flex; justify-content: space-between; padding: 0 20px; align-items: center;
+}
+.player-balance-bar::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); z-index: -1;
+}
+
+.player-balance, .tickets-balance { font-size: 4vh; opacity: 0.9; }
+.tickets-balance {
+  cursor: pointer; display: flex; align-items: center; gap: 4px;
+}
+.tickets-balance:hover, .tickets-balance.active-league { border-radius: 8px; padding: 2px; }
+.tickets-value.clickable { font-weight: 700; }
+.tickets-icon-small { height: 5vh; }
+
+.super-prizes-bar {
+  height: 8vh; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+  overflow: hidden; color: #4caf50;
+}
+.super-prizes-bar .message {
+  font-size: 16px; font-weight: 600; flex: 1; margin-right: 8px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#nextButton {
+  padding: 6px 12px; border: none; background: #4caf50; color: #fff; 
+  font-size: 13px; cursor: pointer; border-radius: 4px; flex-shrink: 0;
+}
+#nextButton:disabled { background: #555; cursor: default; }
+
+.menu-bar { 
+  background: #222; display: flex !important; justify-content: space-around; 
+  align-items: center; padding: 8px 0; height: 8vh;
+}
+.menu-icon {
+	height: 5vh;
+}
+
+
+/* ════════════════════════════════════════════════════ *//* 6. МОДАЛКА ЛИГ */
+/* ════════════════════════════════════════════════════ *//* 6. МОДАЛКА ЛИГ - НОВЫЙ ДИЗАЙН */
+.league-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center;
+  z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+.league-modal.active { opacity: 1; visibility: visible; }
+
+.league-modal-content {
+  background: #222; border: 2px solid #4caf50; border-radius: 20px; padding: 20px;
+  max-width: 350px; width: 90%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+.league-buttons { 
+  display: flex; flex-direction: column; gap: 12px; 
+}
+
+.league-btn {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px; border: none; border-radius: 12px;
+  cursor: pointer; transition: all 0.2s ease; height: 70px;
+  font-weight: 600; overflow: hidden; position: relative;
+}
+
+.league-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.league-text {
+  flex: 1; display: flex; flex-direction: column; 
+  text-align: left; min-width: 0;
+}
+
+.league-name {
+  font-size: 18px; font-weight: 700; margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.league-tickets {
+  font-size: 14px; opacity: 0.9; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ЦВЕТА ЛИГ */
+.league-btn.test { 
+  background: linear-gradient(135deg, #4caf50, #45a049); 
+  color: white; 
+}
+.league-btn.cash { 
+  background: linear-gradient(135deg, #ff9800, #f57c00); 
+  color: white; 
+}
+.league-btn.ad { 
+  background: linear-gradient(135deg, #9c27b0, #7b1fa2); 
+  color: white; 
+}
+
+.league-btn:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); 
+}
+
+.league-btn.active { 
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px #4caf50; 
+  transform: scale(1.02); 
+}
+
+
+/* ════════════════════════════════════════════════════ *//* 7. АНИМАЦИИ И МЕДИА */
+/* ════════════════════════════════════════════════════ */@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 0.85; transform: translateY(0); }
+}
+.side-taps:not(.hidden) { animation: fadeInUp 0.3s ease; }
+.side.winner .side-taps { opacity: 1 !important; text-shadow: 0 0 10px #4caf50; }
+
+@media (max-width: 400px) {
+  .bets-value { font-size: 15vh; }
+  .bets-left-percent, .bets-right-percent { font-size: 6vh; }
+  .side-taps-value { font-size: 13vh; }
+}

@@ -1,0 +1,147 @@
+{
+  "version": "3.0.3",
+  "lastUpdate": "2025-12-28T19:37:00+03:00",
+  
+  "leagues": {
+    "test": {
+      "roundEndTime": "2025-12-28T19:30:00+03:00",
+      "boardRange": [1, 570],
+      "totalTicketsOnBoards": 1250,
+      "playerTickets": 100,
+      "activePlayers": 47,
+      "lastRoundWinDisplay": "52.3%",
+      "stickerPairId": "pair_456",
+      
+      "leftSticker": {
+        "id": "sticker_fire_001",
+        "url": "pic/Stikers/4.1 fire.svg",
+        "primaryColor": "#ff4444",
+        "altColor": "#ff8888",
+        "authorId": "user_123",
+        "inviterId": "user_456"
+      },
+      
+      "rightSticker": {
+        "id": "sticker_water_002",
+        "url": "pic/Stikers/4.2 water.svg",
+        "primaryColor": "#4488ff",
+        "altColor": "#88aaff",
+        "authorId": "user_789",
+        "inviterId": "user_101"
+      },
+      
+      "pairAuthors": {
+        "authorId": "user_123",
+        "inviterId": "user_999"
+      },
+      
+      "previousRound": {
+        "roundEndTime": "2025-12-28T19:20:00+03:00",
+        "totalTickets": 1150,
+        "winningTickets": 623,
+        "jackpotTickets": 47,
+        "tickets": [
+          {
+            "ticketId": "ticket_test_001",
+            "ownerId": "user_123",
+            "ownerName": "Иван Иванов",
+            "boardId": 1,
+            "side": "left",
+            "status": "won"
+          }
+        ]
+      }
+    },
+    
+    "cash": {
+      "roundEndTime": "2025-12-28T19:25:00+03:00",
+      "boardRange": [571, 1140],
+      "totalTicketsOnBoards": 890,
+      "playerTickets": 55,
+      "activePlayers": 23,
+      "lastRoundWinDisplay": "48.7%",
+      "stickerPairId": "pair_789",
+      
+      "leftSticker": {
+        "id": "sticker_money_001",
+        "url": "pic/Stikers/money_left.svg",
+        "primaryColor": "#ffd700",
+        "altColor": "#ffed88",
+        "authorId": "user_222",
+        "inviterId": "user_333"
+      },
+      
+      "rightSticker": {
+        "id": "sticker_dollar_002",
+        "url": "pic/Stikers/dollar_right.svg", 
+        "primaryColor": "#00ff88",
+        "altColor": "#88ffaa",
+        "authorId": "user_444",
+        "inviterId": "user_555"
+      },
+      
+      "pairAuthors": {
+        "authorId": "user_222",
+        "inviterId": "888"
+      },
+      
+      "previousRound": {
+        "roundEndTime": "2025-12-28T19:15:00+03:00",
+        "totalTickets": 780,
+        "winningTickets": 412,
+        "jackpotTickets": 23,
+        "tickets": [
+          {
+            "ticketId": "ticket_cash_001",
+            "ownerId": "user_222",
+            "ownerName": "Анна Смирнова", 
+            "boardId": 571,
+            "side": "right",
+            "status": "lost"
+          }
+        ]
+      }
+    },
+    
+    "ad": {
+      "roundEndTime": "2025-12-28T19:35:00+03:00",
+      "boardRange": [1141, 1710],
+      "totalTicketsOnBoards": 2034,
+      "playerTickets": 103,
+      "activePlayers": 89,
+      "lastRoundWinDisplay": "61.2%",
+      "stickerPairId": "pair_101",
+      
+      "leftSticker": {
+        "id": "sticker_ad_001",
+        "url": "pic/Stikers/ad_left.svg",
+        "primaryColor": "#ff6b6b",
+        "altColor": "#ffaaaa",
+        "authorId": "user_666",
+        "inviterId": "user_777"
+      },
+      
+      "rightSticker": {
+        "id": "sticker_boost_002",
+        "url": "pic/Stikers/boost_right.svg",
+        "primaryColor": "#4ecdc4",
+        "altColor": "#a8e6cf", 
+        "authorId": "user_888",
+        "inviterId": "user_999"
+      },
+      
+      "pairAuthors": {
+        "authorId": "user_666",
+        "inviterId": "user_000"
+      },
+      
+      "previousRound": {
+        "roundEndTime": "2025-12-28T19:25:00+03:00",
+        "totalTickets": 1890,
+        "winningTickets": 1156,
+        "jackpotTickets": 67,
+        "tickets": []
+      }
+    }
+  }
+}
