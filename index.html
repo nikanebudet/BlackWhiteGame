@@ -46,16 +46,10 @@
 
         <!-- Билеты и результаты -->
         <div class="bets" id="Bets">
-          <!-- Проценты ЛЕВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
-          <span class="bets-left-percent hidden" id="leftPercent">0%</span>
-
           <!-- Иконка Лиги в билетах (ВСЕГДА) -->
           <img src="./pic/icon/tickets_test.svg" class="bets-icon" alt="Tickets"/>
           <!-- Общее количество (ВСЕГДА) -->
           <span class="bets-value" id="BetsValue">0</span>
-
-          <!-- Проценты ПРАВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
-          <span class="bets-right-percent hidden" id="rightPercent">0%</span>
         </div>
       </div>
 
@@ -71,6 +65,9 @@
               <!-- 1. РЕЗУЛЬТАТЫ НАВЕРХУ — Левая сторона [СКРЫТО → КОНЕЦ: ПОКАЗАТЬ] -->
               <div class="side-results">
                 <div class="side-final-bets hidden" id="leftFinalBets">
+				  <!-- Проценты ЛЕВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
+					<span class="bets-left-percent hidden" id="leftPercent">0%</span>
+				<!-- Билеты ЛЕВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
                   <span class="side-final-bets-value" id="leftFinalBetsValue">0</span>
                 </div>
               </div>
@@ -98,6 +95,9 @@
               <!-- 1. РЕЗУЛЬТАТЫ НАВЕРХУ Правой стороны -->
               <div class="side-results">
                 <div class="side-final-bets hidden" id="rightFinalBets">
+				<!-- Проценты ПРАВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
+				  <span class="bets-right-percent hidden" id="rightPercent">0%</span>
+				<!-- Билеты ПРАВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->  
                   <span class="side-final-bets-value" id="rightFinalBetsValue">0</span>
                 </div>
               </div>

@@ -58,23 +58,29 @@
       ticketsWhole: 100, ticketsRemainder: 0,
       ticketIcon: "./pic/icon/tickets_test.svg",
       leftSticker: "./pic/stikers/4.1 fire.svg",
+	  leftMainColorSticker: "#f8a624",     // 🔥 огонь = оранжевый
       rightSticker: "./pic/stikers/4.2 water.svg",
+	  rightMainColorSticker: "#5dadec",    // 💧 вода = синий
       boardStart: 1, boardCurrent: 1
     },
     cash: {
       name: "CASH", 
       ticketsWhole: 55, ticketsRemainder: 0,
       ticketIcon: "./pic/icon/tickets_wood.svg",
-      leftSticker: "./pic/stikers/4.3 earth.svg",
-      rightSticker: "./pic/stikers/4.4 air.svg",
+      leftSticker: "./pic/stikers/5.1 wulf.svg",
+	  leftMainColorSticker: "#66757F",     // 🐺 волк = серый
+      rightSticker: "./pic/stikers/5.2 fox.svg",
+	  rightMainColorSticker: "#F4900C",    // 🦊 лиса = оранжевый
       boardStart: 100, boardCurrent: 127
     },
     ad: {
       name: "AD",
       ticketsWhole: 103, ticketsRemainder: 0,
       ticketIcon: "./pic/icon/tickets_ads.svg",
-      leftSticker: "./pic/stikers/4.5 lightning.svg",
-      rightSticker: "./pic/stikers/4.6 shadow.svg",
+      leftSticker: "./pic/stikers/3.1 like.svg",
+	  leftMainColorSticker: "#DD2E44",     // ❤️ лайк = красный
+      rightSticker: "./pic/stikers/3.2 flirt.svg",
+	  rightMainColorSticker: "#E8596E",    // 💕 флирт = розовый
       boardStart: 500, boardCurrent: 543
     }
   };
@@ -164,6 +170,14 @@
       
       if (ELEMENTS.leftSticker) ELEMENTS.leftSticker.src = data.leftSticker;
       if (ELEMENTS.rightSticker) ELEMENTS.rightSticker.src = data.rightSticker;
+	  
+	  // ⭐ НОВОЕ: Меняем цвета сторон
+	  ELEMENTS.left.style.backgroundColor = data.rightMainColorSticker;
+	  ELEMENTS.right.style.backgroundColor = data.leftMainColorSticker;
+	  // ⭐ Левый процент = цвет ЛЕВОГО стикера
+	  ELEMENTS.leftPercentEl.style.color = data.leftMainColorSticker;
+  	  // ⭐ Правый процент = цвет ПРАВОГО стикера
+	  ELEMENTS.rightPercentEl.style.color = data.rightMainColorSticker;
       
       ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;
       
