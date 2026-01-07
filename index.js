@@ -56,25 +56,25 @@
     test: {
       name: "TEST",
       ticketsWhole: 100, ticketsRemainder: 0,
-      ticketIcon: "./pic/Icon/tickets_test.svg",
-      leftSticker: "./pic/Stikers/4.1 fire.svg",
-      rightSticker: "./pic/Stikers/4.2 water.svg",
+      ticketIcon: "./pic/icon/tickets_test.svg",
+      leftSticker: "./pic/stikers/4.1 fire.svg",
+      rightSticker: "./pic/stikers/4.2 water.svg",
       boardStart: 1, boardCurrent: 1
     },
     cash: {
       name: "CASH", 
       ticketsWhole: 55, ticketsRemainder: 0,
-      ticketIcon: "./pic/Icon/tickets_wood.svg",
-      leftSticker: "./pic/Stikers/4.3 earth.svg",
-      rightSticker: "./pic/Stikers/4.4 air.svg",
+      ticketIcon: "./pic/icon/tickets_wood.svg",
+      leftSticker: "./pic/stikers/4.3 earth.svg",
+      rightSticker: "./pic/stikers/4.4 air.svg",
       boardStart: 100, boardCurrent: 127
     },
     ad: {
       name: "AD",
       ticketsWhole: 103, ticketsRemainder: 0,
-      ticketIcon: "./pic/Icon/tickets_ads.svg",
-      leftSticker: "./pic/Stikers/4.5 lightning.svg",
-      rightSticker: "./pic/Stikers/4.6 shadow.svg",
+      ticketIcon: "./pic/icon/tickets_ads.svg",
+      leftSticker: "./pic/stikers/4.5 lightning.svg",
+      rightSticker: "./pic/stikers/4.6 shadow.svg",
       boardStart: 500, boardCurrent: 543
     }
   };
