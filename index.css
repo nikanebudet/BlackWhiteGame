@@ -73,7 +73,7 @@ body {
 
 .bets {
   position: relative; display: flex; align-items: center; justify-content: center;
-  gap: 2vw; width: 100%; margin-top: -14px;
+  gap: 2vw; width: 90%; margin-top: -14px;
   filter: drop-shadow(0.12vh 0.3vh 0.4vh rgba(0, 0, 0, 0.6));
   cursor: pointer; /* ✅ Курсор */
   transition: transform 0.1s;
@@ -99,12 +99,14 @@ body {
   cursor: pointer; /* ✅ Курсор */
 }
 
+
+
 /* ════════════════════════════════════════════════════ */
 /* 4. ИГРОВОЕ ПОЛЕ */
 /* ════════════════════════════════════════════════════ */
 .sides {
   position: relative; flex: 1; display: flex; max-width: 500px;
-  padding-bottom: 140px; min-height: calc(100vh - 60px - 190px);
+  padding-bottom: 120px; min-height: calc(100vh - 60px - 190px);
 }
 
 .side {
@@ -227,60 +229,70 @@ body {
 }
 
 .league-buttons { 
-  display: flex; flex-direction: column; gap: 12px; 
+  display: flex; flex-direction: column; gap: 25px; 
 }
 
 .league-btn {
-  display: flex; align-items: center; gap: 12px;
-  padding: 16px 20px; border: none; border-radius: 12px;
-  cursor: pointer; transition: all 0.2s ease; height: 70px;
-  font-weight: 600; overflow: hidden; position: relative;
+  display: flex; align-items: center; gap: 25px;
+  padding: 16px 25px; border: none; border-radius: 12px;
+  cursor: pointer; transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); height: 70px;
+  font-size: 7vh; font-weight: 900; overflow: hidden; position: relative;
+  
+  /* ⭐ ОСНОВА - ЛЕГКИЙ ВЫСТУП */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .league-icon {
-  width: 40px; height: 40px; flex-shrink: 0;
+  width: 50px; height: 50px; flex-shrink: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-.league-text {
+/*.league-text {
   flex: 1; display: flex; flex-direction: column; 
   text-align: left; min-width: 0;
 }
 
 .league-name {
   font-size: 18px; font-weight: 700; margin-bottom: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;*/
 }
 
 .league-tickets {
-  font-size: 14px; opacity: 0.9; font-weight: 500;
+  font-size: 24px; opacity: 0.9; font-weight: 900;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 /* ЦВЕТА ЛИГ */
 .league-btn.test { 
-  background: linear-gradient(135deg, #4caf50, #45a049); 
+  background: linear-gradient(135deg, #C3C3C3, #A8A8A8); 
   color: white; 
 }
 .league-btn.cash { 
-  background: linear-gradient(135deg, #ff9800, #f57c00); 
+  background: linear-gradient(135deg, #DBA170, #D69461); 
   color: white; 
 }
 .league-btn.ad { 
-  background: linear-gradient(135deg, #9c27b0, #7b1fa2); 
+  background: linear-gradient(135deg, #FF5555, #FF2D2D); 
   color: white; 
 }
 
 .league-btn:hover { 
-  transform: translateY(-2px); 
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); 
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 .league-btn.active { 
-  box-shadow: 0 0 0 3px #fff, 0 0 0 6px #4caf50; 
-  transform: scale(1.02); 
+  transform: translateY(4px) scale(0.97);  /* 🎮 ГЛУБОКО ПРОДАВЛЕНА */
+  box-shadow: 
+    /* СНАРУЖИ */
+    0 2px 6px rgba(0, 0, 0, 0.8), 
+    
+    /* ВНУТРИ - 4-СТОРОННИЙ ОБЪЁМ */
+    inset 0 4px 8px rgba(255, 255, 255, 0.3),     /* ✨ ВЕРХНИЙ БЛИК */
+    inset 0 -4px 8px rgba(0, 0, 0, 0.4),          /* 🖤 НИЖНЯЯ ТЕНЬ */
+    inset -4px 0 8px rgba(255, 255, 255, 0.2),    /* ✨ ЛЕВЫЙ БЛИК */
+    inset 4px 0 8px rgba(0, 0, 0, 0.3);           /* 🖤 ПРАВЫЙ КОНТУР */
 }
-
 
 /* ════════════════════════════════════════════════════ */
 /* 7. АНИМАЦИИ И МЕДИА */

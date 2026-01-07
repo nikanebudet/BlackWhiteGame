@@ -1,8 +1,7 @@
 /**
- * Version: 3.0.24 - ✅ ПОЛНЫЙ ФИКС КЛИКОВ + ИКОНКИ!
- * - BetsIcon + BetsValueEl → МОДАЛКА (с stopPropagation)
- * - ticketsIconSmall + ticketsValueDisplayEl → ЦИКЛ лиг
- * - ГЛАДКИЙ счёт: МОИ + СИМУЛЯЦИЯ
+ * Version: 3.0.26 - ✅ ПАРАЛЛЕЛЬНЫЕ ТАЙМЕРЫ ЛИГ
+ * - Каждая лига тикает независимо
+ * - Переключение сохраняет состояние всех лиг
  */
 
 (() => {
@@ -54,33 +53,24 @@
   // ═════════════════════════════════════════════════════
   const LEAGUES = {
     test: {
-      name: "TEST",
-      ticketsWhole: 100, ticketsRemainder: 0,
+      name: "TEST", ticketsWhole: 100, ticketsRemainder: 0,
       ticketIcon: "./pic/icon/tickets_test.svg",
-      leftSticker: "./pic/stikers/4.1 fire.svg",
-	  leftMainColorSticker: "#f8a624",     // 🔥 огонь = оранжевый
-      rightSticker: "./pic/stikers/4.2 water.svg",
-	  rightMainColorSticker: "#5dadec",    // 💧 вода = синий
+      leftSticker: "./pic/stikers/4.1 fire.svg", leftMainColorSticker: "#f8a624",
+      rightSticker: "./pic/stikers/4.2 water.svg", rightMainColorSticker: "#5dadec",
       boardStart: 1, boardCurrent: 1
     },
     cash: {
-      name: "CASH", 
-      ticketsWhole: 55, ticketsRemainder: 0,
+      name: "CASH", ticketsWhole: 55, ticketsRemainder: 0,
       ticketIcon: "./pic/icon/tickets_wood.svg",
-      leftSticker: "./pic/stikers/5.1 wulf.svg",
-	  leftMainColorSticker: "#66757F",     // 🐺 волк = серый
-      rightSticker: "./pic/stikers/5.2 fox.svg",
-	  rightMainColorSticker: "#F4900C",    // 🦊 лиса = оранжевый
+      leftSticker: "./pic/stikers/5.1 wulf.svg", leftMainColorSticker: "#66757F",
+      rightSticker: "./pic/stikers/5.2 fox.svg", rightMainColorSticker: "#F4900C",
       boardStart: 100, boardCurrent: 127
     },
     ad: {
-      name: "AD",
-      ticketsWhole: 103, ticketsRemainder: 0,
+      name: "AD", ticketsWhole: 103, ticketsRemainder: 0,
       ticketIcon: "./pic/icon/tickets_ads.svg",
-      leftSticker: "./pic/stikers/3.1 like.svg",
-	  leftMainColorSticker: "#DD2E44",     // ❤️ лайк = красный
-      rightSticker: "./pic/stikers/3.2 flirt.svg",
-	  rightMainColorSticker: "#E8596E",    // 💕 флирт = розовый
+      leftSticker: "./pic/stikers/3.1 like.svg", leftMainColorSticker: "#DD2E44",
+      rightSticker: "./pic/stikers/3.2 flirt.svg", rightMainColorSticker: "#E8596E",
       boardStart: 500, boardCurrent: 543
     }
   };
@@ -98,18 +88,21 @@
     currentLeague: "test",
     cashBalanceCents: 12000,
     
-    timeLeft: CONSTANTS.ROUND_DURATION_SEC,
-    timerId: null,
+    // ✅ СОСТОЯНИЕ КАЖДОЙ ЛИГИ (включая timeLeft)
+    leaguesState: {
+      test: { boardCurrent: 1, simulationLeftVotes: 0, simulationRightVotes: 0, timeLeft: 570, isRoundFinished: false, isBetweenRounds: false },
+      cash: { boardCurrent: 127, simulationLeftVotes: 0, simulationRightVotes: 0, timeLeft: 570, isRoundFinished: false, isBetweenRounds: false },
+      ad: { boardCurrent: 543, simulationLeftVotes: 0, simulationRightVotes: 0, timeLeft: 570, isRoundFinished: false, isBetweenRounds: false }
+    },
+    
+    // ⭐ ГЛОБАЛЬНЫЕ таймеры для лиг
+    leagueTimers: { test: null, cash: null, ad: null },
+    
     playerSimulationId: null,
-    isRoundFinished: false,
-    isBetweenRounds: false,
-
     playerLeftTickets: { test: 0, cash: 0, ad: 0 },
     playerRightTickets: { test: 0, cash: 0, ad: 0 },
-
     simulationLeftVotes: 0,
     simulationRightVotes: 0,
-
     isRandomMode: true,
     isDebugMode: true,
     randomMaxTickets: 200
@@ -124,14 +117,11 @@
     },
 
     getCurrentPlayerTickets() {
-      return STATE.playerLeftTickets[STATE.currentLeague] + 
-             STATE.playerRightTickets[STATE.currentLeague];
+      return STATE.playerLeftTickets[STATE.currentLeague] + STATE.playerRightTickets[STATE.currentLeague];
     },
 
     getTotalTickets() {
-      return UTILS.getCurrentPlayerTickets() + 
-             STATE.simulationLeftVotes + 
-             STATE.simulationRightVotes;
+      return UTILS.getCurrentPlayerTickets() + STATE.simulationLeftVotes + STATE.simulationRightVotes;
     },
 
     getCurrentTicketsWhole() {
@@ -155,37 +145,60 @@
     },
 
     updateBalanceDisplay() {
-      ELEMENTS.walletAmountEl.textContent = 
-        `$${Math.floor(STATE.cashBalanceCents / CONSTANTS.USD_CENTS)}`;
+      ELEMENTS.walletAmountEl.textContent = `$${Math.floor(STATE.cashBalanceCents / CONSTANTS.USD_CENTS)}`;
     },
 
     switchLeague(league) {
+      const prevLeague = STATE.currentLeague;
+      
+      // ⭐ Остановить симуляцию предыдущей лиги
+      if (STATE.playerSimulationId) {
+        clearInterval(STATE.playerSimulationId);
+        STATE.playerSimulationId = null;
+      }
+      
+      // Сохранить состояние предыдущей лиги
+      STATE.leaguesState[prevLeague] = {
+        ...STATE.leaguesState[prevLeague],
+        simulationLeftVotes: STATE.simulationLeftVotes,
+        simulationRightVotes: STATE.simulationRightVotes,
+        boardCurrent: LEAGUES[prevLeague].boardCurrent
+      };
+      
+      // Переключить лигу
       STATE.currentLeague = league;
       const data = UTILS.getLeagueData(league);
+      const leagueState = STATE.leaguesState[league];
       
+      // Восстановить состояние новой лиги
+      STATE.simulationLeftVotes = leagueState.simulationLeftVotes;
+      STATE.simulationRightVotes = leagueState.simulationRightVotes;
+      
+      // Обновить визуал
       UTILS.updateTicketsDisplay();
-      
       if (ELEMENTS.ticketsIconSmall) ELEMENTS.ticketsIconSmall.src = data.ticketIcon;
       if (ELEMENTS.betsIcon) ELEMENTS.betsIcon.src = data.ticketIcon;
-      
       if (ELEMENTS.leftSticker) ELEMENTS.leftSticker.src = data.leftSticker;
       if (ELEMENTS.rightSticker) ELEMENTS.rightSticker.src = data.rightSticker;
-	  
-	  // ⭐ НОВОЕ: Меняем цвета сторон
-	  ELEMENTS.left.style.backgroundColor = data.rightMainColorSticker;
-	  ELEMENTS.right.style.backgroundColor = data.leftMainColorSticker;
-	  // ⭐ Левый процент = цвет ЛЕВОГО стикера
-	  ELEMENTS.leftPercentEl.style.color = data.leftMainColorSticker;
-  	  // ⭐ Правый процент = цвет ПРАВОГО стикера
-	  ELEMENTS.rightPercentEl.style.color = data.rightMainColorSticker;
+      
+      ELEMENTS.left.style.backgroundColor = data.rightMainColorSticker;
+      ELEMENTS.right.style.backgroundColor = data.leftMainColorSticker;
+      if (ELEMENTS.leftPercentEl) ELEMENTS.leftPercentEl.style.color = data.leftMainColorSticker;
+      if (ELEMENTS.rightPercentEl) ELEMENTS.rightPercentEl.style.color = data.rightMainColorSticker;
       
       ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;
       
-      STATE.simulationLeftVotes = 0;
-      STATE.simulationRightVotes = 0;
+      // ⭐ Обновить отображаемый таймер
+      ELEMENTS.timerText.textContent = UTILS.formatTime(leagueState.timeLeft);
       
       updateDisplay();
-      console.log(`🔄 Лига: ${league} | Всего билетов: ${UTILS.getTotalTickets()}`);
+      
+      // ⭐ Запустить симуляцию для новой лиги (если нужно)
+      if (STATE.isRandomMode && !leagueState.isRoundFinished && !leagueState.isBetweenRounds) {
+        PLAYER_SIMULATION.start();
+      }
+      
+      console.log(`🔄 Лига: ${league} | #${data.boardCurrent} | ${UTILS.formatTime(leagueState.timeLeft)}`);
     },
 
     cycleLeague() {
@@ -217,7 +230,8 @@
       if (STATE.playerSimulationId) return;
       
       const simulateBet = () => {
-        if (STATE.isRoundFinished || STATE.isBetweenRounds) return;
+        const leagueState = STATE.leaguesState[STATE.currentLeague];
+        if (leagueState.isRoundFinished || leagueState.isBetweenRounds) return;
         
         const side = Math.random() < 0.52 ? 'left' : 'right';
         const betAmount = Math.floor(Math.random() * 3) + 2;
@@ -228,7 +242,7 @@
           STATE.simulationRightVotes += betAmount;
         }
         
-        console.log(`📊 Симуляция: L:${STATE.simulationLeftVotes} R:${STATE.simulationRightVotes} | Всего: ${UTILS.getTotalTickets()}`);
+        console.log(`📊 Симуляция: L:${STATE.simulationLeftVotes} R:${STATE.simulationRightVotes}`);
         updateDisplay();
       };
       
@@ -244,11 +258,47 @@
   };
 
   // ═════════════════════════════════════════════════════
-  // 6. ЛОГИКА РАУНДА
+  // 6. ГЛОБАЛЬНЫЙ МАСТЕР-ТАЙМЕР (тикает ВСЕ лиги)
+  // ═════════════════════════════════════════════════════
+  const MASTER_TIMER = {
+    id: null,
+    
+    start() {
+      if (MASTER_TIMER.id) return;
+      
+      MASTER_TIMER.id = setInterval(() => {
+        // Тикаем ВСЕ лиги параллельно
+        ['test', 'cash', 'ad'].forEach(league => {
+          const state = STATE.leaguesState[league];
+          if (!state.isRoundFinished && !state.isBetweenRounds && state.timeLeft > 0) {
+            state.timeLeft--;
+            
+            // ⭐ Если это текущая лига - обновляем UI
+            if (league === STATE.currentLeague) {
+              ELEMENTS.timerText.textContent = UTILS.formatTime(state.timeLeft);
+              
+              // Завершить раунд если время вышло
+              if (state.timeLeft <= 0) {
+                ROUND.finish();
+              }
+            }
+          }
+        });
+      }, 1000);
+    }
+  };
+
+  // ═════════════════════════════════════════════════════
+  // 7. ЛОГИКА РАУНДА
   // ═════════════════════════════════════════════════════
   const ROUND = {
     reset() {
-      STATE.isRoundFinished = false;
+      const league = STATE.currentLeague;
+      const leagueState = STATE.leaguesState[league];
+      
+      leagueState.isRoundFinished = false;
+      leagueState.isBetweenRounds = false;
+      leagueState.simulationLeftVotes = 0;
       STATE.simulationLeftVotes = 0;
       STATE.simulationRightVotes = 0;
       
@@ -259,27 +309,17 @@
       
       const data = UTILS.getLeagueData();
       ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;
-      STATE.timeLeft = CONSTANTS.ROUND_DURATION_SEC;
+      leagueState.timeLeft = CONSTANTS.ROUND_DURATION_SEC;
       
       updateDisplay();
     },
 
-    startTimer() {
-      if (STATE.timerId) clearInterval(STATE.timerId);
-      STATE.timerId = setInterval(() => {
-        STATE.timeLeft--;
-        if (STATE.timeLeft <= 0 && !STATE.isRoundFinished && !STATE.isBetweenRounds) {
-          ROUND.finish();
-        }
-        ELEMENTS.timerText.textContent = UTILS.formatTime(STATE.timeLeft);
-      }, 1000);
-    },
-
     finish() {
-      STATE.isRoundFinished = true;
-      clearInterval(STATE.timerId);
+      const league = STATE.currentLeague;
+      STATE.leaguesState[league].isRoundFinished = true;
+      
       PLAYER_SIMULATION.stop();
-
+      
       const totalSimulation = STATE.simulationLeftVotes + STATE.simulationRightVotes || 1;
       const leftChance = STATE.simulationLeftVotes / totalSimulation;
       const isLeftWin = Math.random() < leftChance;
@@ -298,11 +338,13 @@
   };
 
   // ═════════════════════════════════════════════════════
-  // 7. ОБНОВЛЕНИЕ UI
+  // 8. ОБНОВЛЕНИЕ UI
   // ═════════════════════════════════════════════════════
   function updateDisplay() {
-    const leftPlayerBets = STATE.playerLeftTickets[STATE.currentLeague];
-    const rightPlayerBets = STATE.playerRightTickets[STATE.currentLeague];
+    const league = STATE.currentLeague;
+    const leagueState = STATE.leaguesState[league];
+    const leftPlayerBets = STATE.playerLeftTickets[league];
+    const rightPlayerBets = STATE.playerRightTickets[league];
     
     ELEMENTS.leftTapsValueEl.textContent = leftPlayerBets;
     ELEMENTS.rightTapsValueEl.textContent = rightPlayerBets;
@@ -323,7 +365,7 @@
       ELEMENTS.nextButton.style.display = "block";
       ELEMENTS.msg.parentElement.style.display = "flex";
     } else {
-      ELEMENTS.leftFinalBetsEl.classList.add("hidden");
+            ELEMENTS.leftFinalBetsEl.classList.add("hidden");
       ELEMENTS.rightFinalBetsEl.classList.add("hidden");
       ELEMENTS.leftPercentEl.classList.add("hidden");
       ELEMENTS.rightPercentEl.classList.add("hidden");
@@ -335,20 +377,18 @@
     const leftPercent = UTILS.toFixedDown(((STATE.playerLeftTickets[STATE.currentLeague] + STATE.simulationLeftVotes) / totalAll) * 100, 0);
     const rightPercent = UTILS.toFixedDown(((STATE.playerRightTickets[STATE.currentLeague] + STATE.simulationRightVotes) / totalAll) * 100, 0);
     
-    ELEMENTS.leftPercentEl.textContent = `${leftPercent}%`;
-    ELEMENTS.rightPercentEl.textContent = `${rightPercent}%`;
+    if (ELEMENTS.leftPercentEl) ELEMENTS.leftPercentEl.textContent = `${leftPercent}%`;
+    if (ELEMENTS.rightPercentEl) ELEMENTS.rightPercentEl.textContent = `${rightPercent}%`;
   }
 
   // ═════════════════════════════════════════════════════
-  // 8. ОБРАБОТЧИКИ СОБЫТИЙ - ✅ ФИКС КЛИКОВ!
+  // 9. ОБРАБОТЧИКИ СОБЫТИЙ
   // ═════════════════════════════════════════════════════
   function initEventListeners() {
-    // Стороны
     if (ELEMENTS.left) ELEMENTS.left.addEventListener("click", handleLeftClick);
     if (ELEMENTS.right) ELEMENTS.right.addEventListener("click", handleRightClick);
     if (ELEMENTS.nextButton) ELEMENTS.nextButton.addEventListener("click", nextRound);
     
-    // ✅ ОБЩИЕ БИЛЕТЫ: Иконка + Цифра → МОДАЛКА
     [ELEMENTS.BetsValueEl, ELEMENTS.betsIcon].forEach(el => {
       if (el) {
         el.style.cursor = "pointer";
@@ -364,7 +404,6 @@
       }
     });
 
-    // ✅ ТВОИ БИЛЕТЫ: Иконка + Цифра → ЦИКЛ лиг
     [ELEMENTS.ticketsValueDisplayEl, ELEMENTS.ticketsIconSmall].forEach(el => {
       if (el) {
         el.style.cursor = "pointer";
@@ -420,7 +459,8 @@
   }
 
   function handleLeftClick() {
-    if (STATE.isRoundFinished || STATE.isBetweenRounds || UTILS.getCurrentTicketsWhole() <= 0) return;
+    const leagueState = STATE.leaguesState[STATE.currentLeague];
+    if (leagueState.isRoundFinished || leagueState.isBetweenRounds || UTILS.getCurrentTicketsWhole() <= 0) return;
 
     const ticketsToBet = 1;
     if (ticketsToBet <= UTILS.getCurrentTicketsWhole()) {
@@ -432,7 +472,8 @@
   }
 
   function handleRightClick() {
-    if (STATE.isRoundFinished || STATE.isBetweenRounds || UTILS.getCurrentTicketsWhole() <= 0) return;
+    const leagueState = STATE.leaguesState[STATE.currentLeague];
+    if (leagueState.isRoundFinished || leagueState.isBetweenRounds || UTILS.getCurrentTicketsWhole() <= 0) return;
 
     const ticketsToBet = 1;
     if (ticketsToBet <= UTILS.getCurrentTicketsWhole()) {
@@ -444,34 +485,36 @@
   }
 
   function nextRound() {
+    const league = STATE.currentLeague;
     const data = UTILS.getLeagueData();
     data.boardCurrent++;
+    LEAGUES[league].boardCurrent = data.boardCurrent;
     ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;
     
-    STATE.isBetweenRounds = true;
-    STATE.timeLeft = CONSTANTS.BETWEEN_SEC;
+    STATE.leaguesState[league].isBetweenRounds = true;
+    STATE.leaguesState[league].timeLeft = CONSTANTS.BETWEEN_SEC;
     ELEMENTS.msg.textContent = "Следующий раунд...";
     ELEMENTS.nextButton.disabled = true;
-    ROUND.startTimer();
 
     setTimeout(() => {
-      STATE.isBetweenRounds = false;
+      STATE.leaguesState[league].isBetweenRounds = false;
       ROUND.reset();
     }, CONSTANTS.BETWEEN_SEC * 1000);
   }
 
   // ═════════════════════════════════════════════════════
-  // 9. ИНИЦИАЛИЗАЦИЯ
+  // 10. ИНИЦИАЛИЗАЦИЯ
   // ═════════════════════════════════════════════════════
   function init() {
-    console.log('🚀 3.0.24 - ПОЛНАЯ ВЕРСИЯ С ФИКСОМ КЛИКОВ!');
+    console.log('🚀 3.0.26 - ПАРАЛЛЕЛЬНЫЕ ТАЙМЕРЫ ЛИГ!');
     
     UTILS.updateTicketsDisplay();
     UTILS.updateBalanceDisplay();
     UTILS.switchLeague("test");
-    ROUND.reset();
-    ROUND.startTimer();
-
+    
+    // ⭐ Запустить глобальный мастер-таймер
+    MASTER_TIMER.start();
+    
     STATE.isRandomMode = true;
     STATE.isDebugMode = true;
     if (ELEMENTS.randomCheckBoxEl) ELEMENTS.randomCheckBoxEl.checked = true;
@@ -489,3 +532,4 @@
     init();
   }
 })();
+
