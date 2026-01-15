@@ -803,6 +803,23 @@ function startNextRoundAllLeagues() {
 //═══════════════════════════════════════════════════
   function init() {
     console.log('🚀 3.0.26 - ПАРАЛЛЕЛЬНЫЕ ТАЙМЕРЫ ЛИГ!');
+	/ 🔥 1. TELEGRAM - ПЕРВЫМ ДЕЛОМ!
+	  if (window.Telegram?.WebApp) {
+		Telegram.WebApp.ready();           // Обязательно!
+		Telegram.WebApp.expand();          // Полноэкранный режим
+		
+		const player = Telegram.WebApp.initDataUnsafe?.player;
+		console.log('👤 TG Player:', player);  // F12 → смотри!
+		
+		if (player) {
+		  STATE.tgPlayer = {
+			id: player.id,
+			username: player.username || `User${player.id?.toString().slice(-4)}`,
+			photo: player.photo_url || ''
+		  };
+		  updateTGDisplay();
+		}
+	  }
     
     UTILS.updateTicketsDisplay();
     UTILS.updateBalanceDisplay();
