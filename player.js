@@ -29,12 +29,18 @@ function startGame(userId) {
 */
 
 // player.js - ✅ ИСПРАВЛЕННАЯ ВЕРСИЯ
+// player.js - ✅ БЕЗОПАСНАЯ ВЕРСИЯ (НЕ ЛОМАЕТ index.js)
 (function() {
-  // Ждём Telegram WebApp
+  'use strict';
+  
+  // ГЛОБАЛЬНЫЙ STATE (для index.js)
+  window.STATE = window.STATE || { tgPlayer: { id: null, username: null, photo: null } };
+  
   function initTelegram() {
-    if (!window.Telegram?.WebApp) {
-      console.error('❌ Telegram WebApp НЕ НАЙДЕН!');
-      setTimeout(initTelegram, 100); // Повторяем
+    // Ждём Telegram WebApp
+    if (typeof window.Telegram === 'undefined' || !window.Telegram.WebApp) {
+      console.log('⏳ Ждём Telegram WebApp...');
+      setTimeout(initTelegram, 200);
       return;
     }
 
@@ -44,17 +50,18 @@ function startGame(userId) {
 
     const player = Telegram.WebApp.initDataUnsafe?.player || Telegram.WebApp.initDataUnsafe?.user;
     
-    if (player) {
+    if (player?.id) {
       console.log('👤 TG PLAYER DATA:', player);
       STATE.tgPlayer = {
         id: player.id,
-        username: player.username || player.first_name || `User${player.id?.toString().slice(-4)}`,
+        username: player.username || player.first_name || `User${player.id.toString().slice(-4)}`,
         photo: player.photo_url || ''
       };
       console.log('✅ TG PLAYER УСТАНОВЛЕН:', STATE.tgPlayer);
       updateTGDisplay();
     } else {
       console.log('⚠️ TG Player НЕ НАЙДЕН');
+      showNoAuth();
     }
   }
 
@@ -64,23 +71,26 @@ function startGame(userId) {
     const nickEl = document.getElementById('tgUsername');
     const avatarEl = document.getElementById('tgAvatar');
     
-    if (!infoEl || !idEl || !nickEl || !avatarEl) {
-      console.error('❌ TG элементы НЕ НАЙДЕНЫ!');
-      return;
-    }
+    if (!infoEl || !idEl || !nickEl || !avatarEl) return;
     
-    if (STATE.tgPlayer.id) {
-      idEl.textContent = `ID: ${STATE.tgPlayer.id}`;
-      nickEl.textContent = STATE.tgPlayer.username;
-      avatarEl.src = STATE.tgPlayer.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIGZpbGw9IiM0Q0FGNTAiLz4KPHRleHQgeD0iMTQiIHk9IjE5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IndoaXRlIj5VPC90ZXh0Pg==';
-      infoEl.classList.remove('hidden');
+    idEl.textContent = `ID: ${STATE.tgPlayer.id}`;
+    nickEl.textContent = STATE.tgPlayer.username;
+    avatarEl.src = STATE.tgPlayer.photo || 
+      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIGZpbGw9IiM0Q0FGNTAiLz4KPHRleHQgeD0iMTQiIHk9IjE5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiPlU8L3RleHQ+Cjwvc3ZnPg==';
+    infoEl.classList.remove('hidden');
+  }
+
+  function showNoAuth() {
+    const infoEl = document.getElementById('tgPlayerInfo');
+    if (infoEl) {
+      infoEl.innerHTML = '<span style="color:#ff6b6b;font-size:11px;">⛔ Не в Telegram</span>';
     }
   }
 
-  // ✅ БЕЗОПАСНЫЙ СТАРТ
+  // ✅ СТАРТ ПОСЛЕ DOM
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initTelegram);
   } else {
-    initTelegram();
+    setTimeout(initTelegram, 100);
   }
 })();
