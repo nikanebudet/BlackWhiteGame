@@ -2,6 +2,15 @@
  * Version: 3.0.26 - ✅ ПАРАЛЛЕЛЬНЫЕ ТАЙМЕРЫ ЛИГ
  * - Каждая лига тикает независимо
  * - Переключение сохраняет состояние всех лиг
+
+cd /X/YandexDisk/Game/BlackWhite
+git add .
+git commit -m "Версия 3.0.26 js"
+git push origin main
+
+
+
+
  */
 
 
