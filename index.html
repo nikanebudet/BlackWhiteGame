@@ -23,6 +23,15 @@
       <!-- TOP-BAR (без названия) -->
       <div class="top-bar">
         <div class="top-controls">
+		<!-- ✅ TELEGRAM PLAYER INFO + FOTO -->
+		  <div class="tg-player-info" id="tgPlayerInfo">
+			<img class="tg-avatar" id="tgAvatar" src="" alt="Avatar" />
+			<div class="tg-text">
+			  <span class="tg-id" id="tgUserId">ID: --</span>
+			  <span class="tg-nickname" id="tgUsername">--</span>
+			</div>
+		  </div>
+		<!-- ✅ Отладочная часть панели -->
           <div class="random-CheckBox">
             <span class="random-label">Рандом</span>
             <label class="switch">
@@ -39,15 +48,27 @@
         </div>
       </div>
 		<!-- 1. ВЕРХ - результаты прошлого раунда панель для показать -->
+		<div class="pull-zone-top">
 		<div class="pull-handle-top">
 		  <a href="#results-panel" class="pull-line"></a>
 		  <div class="pull-dots"><span></span><span></span><span></span></div>
 		</div>
 		<div id="results-panel" class="results-panel-top hidden"></div>
+		</div>
 		
       <!-- INFO-GAME (центр экрана) -->
       <div class="info-game">
-        <div class="board-number" id="boardNumber">#1</div>
+        <div class="board-numbers" id="boardNumbers">
+			<div class="board-number-row">
+			  <span class="board-number test" data-league="test">#1</span>
+			</div>
+			<div class="board-number-row">
+			  <span class="board-number cash" data-league="cash">#127</span>
+			</div>
+			<div class="board-number-row">
+			  <span class="board-number ad" data-league="ad">#543</span>
+			</div>
+		</div>
         <div class="time" id="timerText">9:57</div>
 
         <!-- Билеты и результаты -->
@@ -133,6 +154,14 @@
 			<span class="tickets-value clickable" id="ticketsValueDisplay">100</span>
 		</div>
 	  </div>
+
+
+		  <!-- 2. НИЗ - суперпризы (над .super-prizes-bar) — Плашка -->
+				<div class="pull-handle-bottom">
+				  <a href="#superprizes-panel" class="pull-line"></a>
+				  <div class="pull-dots"><span></span><span></span><span></span></div>
+				</div>
+				<div id="superprizes-panel" class="results-panel-bottom hidden"></div>
 
 			<!-- 2. ПАНЕЛЬ СУПЕР ПРИЗОВ (ВТОРОЙ БЛОК) -->
 			<div class="super-prizes-bar">

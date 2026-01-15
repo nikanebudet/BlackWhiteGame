@@ -3,9 +3,17 @@
 
 * { box-sizing: border-box; }
 
+html {
+  height: 100vh; /* ✅ Контейнер для body */
+  overflow: hidden; /* ✅ На html, не на body */
+}
+
+
 body {
   margin: 0; background: #111; color: #fff; font-family: sans-serif;
-  max-width: 500px; min-width: 320px; min-height: 100vh; margin: auto;
+  max-width: 500px; min-width: 320px; height: 100vh !important; /* ✅ Фиксируем высоту */
+  position: relative;
+  overflow: hidden; /* ✅ Полностью убираем скролл */ margin: auto;
 }
 
 /* ════════════════════════════════════════════════════ */
@@ -14,7 +22,7 @@ body {
 .wrap { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
 .top-bar {
-  height: 70px; background: #444; display: flex; align-items: center;
+  height: 7vh; background: #444; display: flex; align-items: center;
   justify-content: flex-end; padding: 0 12px; font-size: 14px;
 }
 
@@ -45,11 +53,29 @@ body {
 
 .show-random-CheckBox span { font-size: 12px; opacity: 0.9; }
 
+.tg-player-info {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; padding: 6px 10px; 
+  background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(0,255,0,0.1));
+  border: 1px solid #4caf50; border-radius: 20px;
+  backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+  transition: all 0.3s ease;
+}
+.tg-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid #4caf50; object-fit: cover;
+}
+.tg-text { display: flex; flex-direction: column; line-height: 1.1; }
+.tg-id { color: #4caf50; font-weight: 900; font-size: 11px; }
+.tg-nickname { color: #fff; opacity: 0.9; font-size: 12px; }
+.tg-player-info.hidden { opacity: 0.3; transform: scale(0.8); }
+.tg-player-info:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(76,175,80,0.4); }
+
 /* ════════════════════════════════════════════════════ */
 /* 3. INFO-GAME (центр экрана) */
 /* ════════════════════════════════════════════════════ */
 .info-game {
-  position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+  position: absolute; top: 7vh; left: 50%; transform: translateX(-50%);
   width: 100%; display: flex; flex-direction: column; align-items: center;
   justify-content: flex-start; z-index: 10; pointer-events: none; padding: 10px 0;
 }
@@ -65,11 +91,11 @@ body {
   text-align: center; margin-bottom: 0vh;
 }
 
-.board-number {
+/*.board-number {
   position: absolute; top: 10px; right: 10px; font-size: 4vh; font-weight: 400;
   opacity: 0.9; padding: 6px 10px; border-radius: 20px; z-index: 15;
   font-family: "Roboto", sans-serif; pointer-events: none;
-}
+}*/
 
 .bets {
   position: relative; display: flex; align-items: center; justify-content: center;
@@ -79,7 +105,7 @@ body {
   transition: transform 0.1s;
 }
 .bets:hover {
-  transform: scale(1.02); /* ✅ Лёгкая анимация */
+  transform: scale(1.01); /* ✅ Лёгкая анимация */
 }
 
 .bets-icon, .bets-value {
@@ -98,6 +124,46 @@ body {
   line-height: 1;
   cursor: pointer; /* ✅ Курсор */
 }
+/* ИНФО-БАР - ТРИ СТРОЧКИ НОМЕРОВ СТОЛОВ */
+/* ✅ ВЕРНУТЬ старое позиционирование + 3 лиги */
+.board-numbers {
+  position: absolute !important;
+  top: 10px !important; 
+  right: 10px !important; 
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  cursor: pointer !important; /* ✅ Курсор */
+  z-index: 15 !important;
+}
+
+.board-number-row {
+  display: flex;
+}
+
+.board-number {
+  font-size: 14px !important;
+  font-weight: 100 !important;
+  line-height: 1 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  opacity: 0.3;
+  transition: all 0.3s ease !important;
+}
+
+/* Цвета лиг */
+.board-number.test { background: rgba(168, 168, 168, 0.2); color: #C3C3C3; }
+.board-number.cash { background: rgba(214, 148, 97, 0.2); color: #DBA170; }
+.board-number.ad { background: rgba(255, 45, 45, 0.2); color: #FF5555; }
+
+/* Активная лига */
+.board-number.active-league {
+  opacity: 1 !important;
+  /*transform: scale(1.05) !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;*/
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
 
 
 
@@ -105,8 +171,10 @@ body {
 /* 4. ИГРОВОЕ ПОЛЕ */
 /* ════════════════════════════════════════════════════ */
 .sides {
-  position: relative; flex: 1; display: flex; max-width: 500px;
-  padding-bottom: 120px; min-height: calc(100vh - 60px - 190px);
+  position: relative; flex: none !important;  /* ✅ Flex растянет идеально */ display: flex; max-width: 500px;
+  /*padding-bottom: 120px;*/ 
+  
+  height: calc(100vh - 7vh - 8vh - 8vh); /* ✅ Убираем фиксированную высоту */
 }
 
 .side {
@@ -156,12 +224,30 @@ body {
   font-family: "Roboto", sans-serif; font-weight: 900; font-size: 11vh; line-height: 1;
 }
 
+/* ✅ ДОБАВИТЬ стили для кликабельных элементов */
+.tickets-balance, .bets, .tickets-value, .bets-value, .bets-icon {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 11;
+}
+
+.board-number, .tickets-value, .tickets-balance {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Анимация при наведении */
+.board-number:hover, .tickets-value:hover {
+  opacity: 1 !important;
+  /*transform: scale(1.05);*/
+}
+
 /* ════════════════════════════════════════════════════ */
 /* 5. НИЖНИЕ ПАНЕЛИ (CSS GRID) */
 /* ════════════════════════════════════════════════════ */
 /* 5. НИЖНИЕ ПАНЕЛИ (CSS GRID - 3 ПАНЕЛИ) */
 .bottom-bars {
-  position: fixed; bottom: 0; left: 0; right: 0; max-width: 500px; margin: 0 auto;
+  position: fixed !important; bottom: 0; left: 0; right: 0; max-width: 500px; min-width: 320px; margin: 0 auto;
   display: grid; 
   grid-template-rows: 7vh 8vh 8vh;     /* ⭐ 3 строки! */
   gap: 0; height: 23vh; z-index: 20;
@@ -224,8 +310,8 @@ body {
 .league-modal.active { opacity: 1; visibility: visible; }
 
 .league-modal-content {
-  background: #222; border: 2px solid #4caf50; border-radius: 20px; padding: 20px;
-  max-width: 350px; width: 90%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  background: #222; border: 2px solid #440973; border-radius: 20px; padding: 20px;
+  max-width: 350px; width: 90%; box-shadow: 0 20px 40px rgb(65 9 98 / 80%);
 }
 
 .league-buttons { 
@@ -292,6 +378,49 @@ body {
     inset 0 -4px 8px rgba(0, 0, 0, 0.4),          /* 🖤 НИЖНЯЯ ТЕНЬ */
     inset -4px 0 8px rgba(255, 255, 255, 0.2),    /* ✨ ЛЕВЫЙ БЛИК */
     inset 4px 0 8px rgba(0, 0, 0, 0.3);           /* 🖤 ПРАВЫЙ КОНТУР */
+}
+
+/* МОДАЛКА ЛИГ - БЛОКИРОВКА */
+.league-btn.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}
+
+.league-btn.disabled:hover {
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* МОДАЛКА - КАСТОМНЫЕ ЦВЕТА ЛИГ */
+.league-modal.league-test .league-modal-content {
+  border: 3px solid #C3C3C3;
+  box-shadow: 0 0 20px rgba(163, 163, 163, 0.5), 
+              0 0 40px rgba(195, 195, 195, 0.3);
+}
+
+.league-modal.league-cash .league-modal-content {
+  border: 3px solid #DBA170;
+  box-shadow: 0 0 20px rgba(214, 148, 97, 0.5), 
+              0 0 40px rgba(219, 161, 112, 0.3);
+}
+
+.league-modal.league-ad .league-modal-content {
+  border: 3px solid #FF5555;
+  box-shadow: 0 0 20px rgba(255, 45, 45, 0.6), 
+              0 0 40px rgba(255, 85, 85, 0.4);
+}
+
+/* Градиентные фоны модалки */
+.league-modal.league-test {
+  background: linear-gradient(135deg, rgba(195, 195, 195, 0.2), rgba(168, 168, 168, 0.1));
+}
+
+.league-modal.league-cash {
+  background: linear-gradient(135deg, rgba(219, 161, 112, 0.2), rgba(214, 148, 97, 0.1));
+}
+
+.league-modal.league-ad {
+  background: linear-gradient(135deg, rgba(255, 85, 85, 0.25), rgba(255, 45, 45, 0.15));
 }
 
 /* ════════════════════════════════════════════════════ */

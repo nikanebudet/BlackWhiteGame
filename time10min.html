@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+body { 
+  margin: 0; height: 100vh; 
+  display: flex; justify-content: center; align-items: center; 
+  background: #0a0a0a; 
+  font: 22vmin 'Orbitron', monospace; 
+}
+
+.digit-container {
+  position: relative;
+  width: 1.2em; height: 1.8em;
+  border: 2px solid #ff4444;
+  background: #1a0000;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(255,68,68,0.6);
+}
+
+.reel {
+  position: absolute;
+  top: 0; left: 0;
+  line-height: 1.8em;
+  font-weight: 700;
+  color: #ff6666;
+  text-shadow: 0 0 10px rgba(255,68,68,0.8);
+}
+
+/* БЫСТРОЕ смещение на новую позицию */
+@keyframes quick-snap {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-1.8em); }
+}
+
+/* ЕСТЕСТВЕННОЕ ПАДЕНИЕ с физикой */
+@keyframes natural-fall {
+  0% { 
+    transform: translateY(0) scaleY(1) rotate(0deg); 
+  }
+  20% { 
+    transform: translateY(0.25em) scaleY(0.95) rotate(1deg); 
+  }
+  40% { 
+    transform: translateY(0.45em) scaleY(0.92) rotate(-0.5deg); 
+  }
+  60% { 
+    transform: translateY(0.55em) scaleY(0.96) rotate(0.5deg); 
+  }
+  80% { 
+    transform: translateY(0.38em) scaleY(0.98) rotate(-0.2deg); 
+  }
+  100% { 
+    transform: translateY(0) scaleY(1) rotate(0deg); 
+  }
+}
+
+/* 10 последовательных падений с интервалом 1 секунда */
+.digit-9 { animation: quick-snap 0.1s forwards, natural-fall 0.8s 0.1s forwards; }
+.digit-8 { animation: quick-snap 0.1s 1s forwards, natural-fall 0.8s 1.1s forwards; }
+.digit-7 { animation: quick-snap 0.1s 2s forwards, natural-fall 0.8s 2.1s forwards; }
+.digit-6 { animation: quick-snap 0.1s 3s forwards, natural-fall 0.8s 3.1s forwards; }
+.digit-5 { animation: quick-snap 0.1s 4s forwards, natural-fall 0.8s 4.1s forwards; }
+.digit-4 { animation: quick-snap 0.1s 5s forwards, natural-fall 0.8s 5.1s forwards; }
+.digit-3 { animation: quick-snap 0.1s 6s forwards, natural-fall 0.8s 6.1s forwards; }
+.digit-2 { animation: quick-snap 0.1s 7s forwards, natural-fall 0.8s 7.1s forwards; }
+.digit-1 { animation: quick-snap 0.1s 8s forwards, natural-fall 0.8s 8.1s forwards; }
+.digit-0 { animation: quick-snap 0.1s 9s forwards, natural-fall 0.8s 9.1s forwards; }
+</style>
+</head>
+<body>
+<div class="digit-container">
+  <div class="reel digit-9 digit-8 digit-7 digit-6 digit-5 digit-4 digit-3 digit-2 digit-1 digit-0">
+    9<br>8<br>7<br>6<br>5<br>4<br>3<br>2<br>1<br>0
+  </div>
+</div>
+</body>
+</html>

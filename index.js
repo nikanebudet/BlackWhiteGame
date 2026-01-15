@@ -4,15 +4,30 @@
  * - Переключение сохраняет состояние всех лиг
  */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (() => {
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 1. DOM ЭЛЕМЕНТЫ
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   const ELEMENTS = {
     left: document.getElementById("leftSide"),
     right: document.getElementById("rightSide"),
     msg: document.getElementById("message"),
-    boardNumber: document.getElementById("boardNumber"),
+    /*boardNumber: document.getElementById("boardNumber"),*/
+	boardNumbers: document.querySelectorAll('.board-number[data-league]'),
     timerText: document.getElementById("timerText"),
     nextButton: document.getElementById("nextButton"),
 
@@ -48,9 +63,9 @@
     leagueModal: document.getElementById("leagueModal")
   };
 
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 2. ЛИГИ
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   const LEAGUES = {
     test: {
       name: "TEST", ticketsWhole: 100, ticketsRemainder: 0,
@@ -75,9 +90,9 @@
     }
   };
 
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 3. КОНСТАНТЫ + STATE  
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   const CONSTANTS = {
     ROUND_DURATION_SEC: 570,
     BETWEEN_SEC: 30,
@@ -93,6 +108,7 @@
   let STATE = {
     currentLeague: "test",
     cashBalanceCents: 12000,
+	tgPlayer: { id: null, username: null, photo: null },
     
     // ✅ СОСТОЯНИЕ КАЖДОЙ ЛИГИ (включая timeLeft)
     leaguesState: {
@@ -121,10 +137,38 @@
     randomMaxTickets: 200
   };
 
+//═══════════════════════════════════════════════════
+// 4. МОДАЛКА ЛИГ
+//═══════════════════════════════════════════════════
+function updateLeagueModalTickets() {
+  const leagueModal = document.getElementById('leagueModal');
+  if (!leagueModal) return;
+  
+  leagueModal.querySelectorAll('.league-btn').forEach(btn => {
+    const league = btn.dataset.league;
+    
+    // ✅ ВРЕМЕННО ПЕРЕКЛЮЧАЕМСЯ НА ЛИГУ → ЧИТАЕМ ЕЁ БАЛАНС → ВОЗВРАЩАЕМСЯ
+    const prevLeague = STATE.currentLeague;
+    STATE.currentLeague = league;
+    
+    const ticketsRemain = UTILS.getCurrentTicketsWhole(); // ← ТОТ ЖЕ БАЛАНС ЧТО В ticketsValueDisplay
+    
+    STATE.currentLeague = prevLeague; // Возвращаем обратно
+    
+    const ticketsEl = btn.querySelector('.league-tickets');
+    ticketsEl.textContent = ticketsRemain;
+    
+    if (ticketsRemain <= 0) {
+      btn.classList.add('disabled');
+    } else {
+      btn.classList.remove('disabled');
+    }
+  });
+}
 
-// ═════════════════════════════════════════════════════
-// 4. УТИЛИТЫ
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
+// 5. УТИЛИТЫ
+//═══════════════════════════════════════════════════
   const UTILS = {
     getLeagueData(league = STATE.currentLeague) {
       return LEAGUES[league];
@@ -200,7 +244,7 @@
       if (ELEMENTS.leftPercentEl) ELEMENTS.leftPercentEl.style.color = data.leftMainColorSticker;
       if (ELEMENTS.rightPercentEl) ELEMENTS.rightPercentEl.style.color = data.rightMainColorSticker;
       
-      ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;
+      /*ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;*/
       
       // ⭐ Обновить отображаемый таймер
       ELEMENTS.timerText.textContent = UTILS.formatTime(leagueState.timeLeft);
@@ -213,6 +257,7 @@
       }
       
       console.log(`🔄 Лига: ${league} | #${data.boardCurrent} | ${UTILS.formatTime(leagueState.timeLeft)}`);
+	  updateBoardNumbers(); // ✅ ДОБАВИТЬ В КОНЕЦ
     },
 
     cycleLeague() {
@@ -222,10 +267,10 @@
       UTILS.switchLeague(leagues[nextIndex]);
     },
 
-    toFixedDown(value, decimals) {
+    /*toFixedDown(value, decimals) {
       const factor = 10 ** decimals;
       return (Math.floor(value * factor) / factor).toFixed(decimals);
-    },
+    },*/
 
     formatTime(sec) {
       const m = Math.floor(sec / 60);
@@ -234,12 +279,9 @@
     }
   };
   
-  
-  
-  
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 4.2. БЛОК 2: УТИЛИТЫ SUPERFUNDS
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   const SUPERFUNDS = {
     isEnabled(league) {
       // Проверяем, включены ли суперфонды для лиги (есть ненулевые значения)
@@ -261,16 +303,16 @@
       console.log(`💰 Суперфонды [${league}]:`, funds);
     },
 
-    getFundNames() {
+    /*getFundNames() {
       return ['1K', '10K', '100K', '1M'];
-    }
+    }*/
   };
 
   
 
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 5. СИМУЛЯЦИЯ ИГРОКОВ
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   const PLAYER_SIMULATION = {
     interval: 2500,
     
@@ -305,9 +347,42 @@
     }
   };
 
-// ═════════════════════════════════════════════════════
+
+//═══════════════════════════════════════════════════
+// 5.1. Авторизация в телеграмме
+//═══════════════════════════════════════════════════
+
+function initTelegramPlayer() {
+  if (window.Telegram?.WebApp?.initDataUnsafe?.player) {
+    const player = Telegram.WebApp.initDataUnsafe.player;
+    STATE.tgPlayer = {
+      id: player.id,
+      username: player.username || `User${player.id}`,
+      photo: player.photo_url || ''
+    };
+    updateTGDisplay();
+  }
+}
+
+function updateTGDisplay() {
+  const infoEl = document.getElementById('tgPlayerInfo');
+  const idEl = document.getElementById('tgUserId');
+  const nickEl = document.getElementById('tgUsername');
+  const avatarEl = document.getElementById('tgAvatar');
+  
+  if (STATE.tgPlayer.id) {
+    idEl.textContent = `ID: ${STATE.tgPlayer.id}`;
+    nickEl.textContent = STATE.tgPlayer.username;
+    avatarEl.src = STATE.tgPlayer.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTQiIGN5PSIxNCIgcj0iMTQiIGZpbGw9IiM0Q0FGNTAiLz4KPHRleHQgeD0iMTQiIHk9IjE5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IndoaXRlIj5IDwvdGV4dD4KPC9zdmc+';
+    infoEl.classList.remove('hidden');
+  } else {
+    infoEl.classList.add('hidden');
+  }
+}
+
+//═══════════════════════════════════════════════════
 // 6. ГЛОБАЛЬНЫЙ МАСТЕР-ТАЙМЕР (тикает ВСЕ лиги)
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   const MASTER_TIMER = {
     id: null,
     
@@ -338,9 +413,9 @@
 
 
 
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 7. ЛОГИКА РАУНДА (НОВАЯ)
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   const ROUND = {
     reset() {
       const league = STATE.currentLeague;
@@ -358,7 +433,7 @@
       ELEMENTS.msg.textContent = "Разместите ставки";
       
       const data = UTILS.getLeagueData();
-      ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;
+      /*ELEMENTS.boardNumber.textContent = `#${data.boardCurrent}`;*/
       leagueState.timeLeft = CONSTANTS.ROUND_DURATION_SEC;
       
       updateDisplay();
@@ -428,9 +503,27 @@
   };
 
 
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 8. ОБНОВЛЕНИЕ UI
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
+
+  // Новая функция для обновления номеров столов
+function updateBoardNumbers() {
+  if (!ELEMENTS.boardNumbers || ELEMENTS.boardNumbers.length === 0) return;
+  ELEMENTS.boardNumbers.forEach(boardEl => {
+    const league = boardEl.dataset.league;
+    
+    // Номер стола
+    boardEl.textContent = `#${LEAGUES[league].boardCurrent}`;
+    
+    // Подсветка текущей лиги
+    if (league === STATE.currentLeague) {
+      boardEl.classList.add('active-league');
+    } else {
+      boardEl.classList.remove('active-league');
+    }
+  });
+}
   function updateDisplay() {
   const league = STATE.currentLeague;
   const leagueState = STATE.leaguesState[league];
@@ -453,8 +546,10 @@
     
     ELEMENTS.leftPercentEl.classList.remove("hidden");
     ELEMENTS.rightPercentEl.classList.remove("hidden");
+	
     ELEMENTS.nextButton.style.display = "block";
     ELEMENTS.msg.parentElement.style.display = "flex";
+	
   } else {
     ELEMENTS.leftFinalBetsEl.classList.add("hidden");
     ELEMENTS.rightFinalBetsEl.classList.add("hidden");
@@ -464,18 +559,17 @@
     ELEMENTS.msg.style.display = "none";
   }
 
+
+
   // ⭐ ФИКС ПРОЦЕНТОВ — всегда сумма = 100%!
   const totalAll = UTILS.getTotalTickets() || 1;
   const leftPercentRaw = ((leftPlayerBets + STATE.simulationLeftVotes) / totalAll) * 100;
   
-  let leftPercent;
-  if (leftPercentRaw < 50) {
+  let leftPercent = leftPercentRaw < 50 ? 
     // Левый < 50% → округляем ВНИЗ
-    leftPercent = Math.floor(leftPercentRaw);
-  } else {
+    Math.floor(leftPercentRaw) :
     // Левый ≥ 50% → округляем ВВЕРХ
-    leftPercent = Math.ceil(leftPercentRaw);
-  }
+    Math.ceil(leftPercentRaw);
   
   const rightPercent = 100 - leftPercent; // ✅ ГАРАРНИРОВАННА 100%!
   
@@ -487,18 +581,27 @@ if (ELEMENTS.nextButton) {
   const leagueState = STATE.leaguesState[STATE.currentLeague];
   ELEMENTS.nextButton.textContent = leagueState.isRoundFinished ? "СЛЕДУЮЩИЙ РАУНД" : "ЗАВЕРШИТЬ РАУНД";
 }
- 
+    // ✅ МОДАЛКА ЛИГ - обновление при каждой ставке
+    updateLeagueModalTickets();
+	updateBoardNumbers();
 }
 
 
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 9. ОБРАБОТЧИКИ СОБЫТИЙ
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   function initEventListeners() {
+	document.getElementById('tgPlayerInfo').addEventListener('click', () => {
+	  if (STATE.tgPlayer.id) {
+		console.log('👤 Player:', STATE.tgPlayer);
+		Telegram.WebApp.showAlert(`ID: ${STATE.tgPlayer.id}\n@${STATE.tgPlayer.username}`);
+	  }
+	});
     if (ELEMENTS.left) ELEMENTS.left.addEventListener("click", handleLeftClick);
     if (ELEMENTS.right) ELEMENTS.right.addEventListener("click", handleRightClick);
     if (ELEMENTS.nextButton) ELEMENTS.nextButton.addEventListener("click", nextRound);
     
+    // ✅ BetsValueEl + betsIcon - ОТКРЫВАЕТ МОДАЛКУ ЛИГ
     [ELEMENTS.BetsValueEl, ELEMENTS.betsIcon].forEach(el => {
       if (el) {
         el.style.cursor = "pointer";
@@ -514,6 +617,7 @@ if (ELEMENTS.nextButton) {
       }
     });
 
+    // ✅ ticketsValueDisplay - цикл лиг
     [ELEMENTS.ticketsValueDisplayEl, ELEMENTS.ticketsIconSmall].forEach(el => {
       if (el) {
         el.style.cursor = "pointer";
@@ -526,6 +630,30 @@ if (ELEMENTS.nextButton) {
         });
       }
     });
+
+    // ✅ КНОПКИ ЛИГ В МОДАЛКЕ
+    if (ELEMENTS.leagueModal) {
+      ELEMENTS.leagueModal.querySelectorAll(".league-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const league = btn.dataset.league;
+          UTILS.switchLeague(league);
+          
+          ELEMENTS.leagueModal.querySelectorAll(".league-btn")
+            .forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          
+          ELEMENTS.ticketsBalanceEl?.classList.toggle("active-league", league === "test");
+          ELEMENTS.leagueModal.classList.remove("active");
+        });
+      });
+      
+      // Закрытие модалки кликом вне
+      ELEMENTS.leagueModal.addEventListener('click', (e) => {
+        if (e.target.classList.contains('league-modal')) {
+          ELEMENTS.leagueModal.classList.remove('active');
+        }
+      });
+    }
 
     if (ELEMENTS.randomCheckBoxEl) {
       ELEMENTS.randomCheckBoxEl.addEventListener("change", () => {
@@ -619,6 +747,7 @@ function nextRound() {
   
   // ⭐ Если раунд завершён → показать результаты ВСЕХ лиг → затем следующий раунд
   console.log('📊 Показываем результаты ВСЕХ лиг...');
+
   
   // Показать результаты всех лиг (1 секунда)
   let resultTimer = 0;
@@ -669,9 +798,9 @@ function startNextRoundAllLeagues() {
 
 
 
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
 // 10. ИНИЦИАЛИЗАЦИЯ
-// ═════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════
   function init() {
     console.log('🚀 3.0.26 - ПАРАЛЛЕЛЬНЫЕ ТАЙМЕРЫ ЛИГ!');
     
@@ -681,6 +810,7 @@ function startNextRoundAllLeagues() {
     
     // ⭐ Запустить глобальный мастер-таймер
     MASTER_TIMER.start();
+	initTelegramPlayer();
     
     STATE.isRandomMode = true;
     STATE.isDebugMode = true;
@@ -689,6 +819,8 @@ function startNextRoundAllLeagues() {
     
     PLAYER_SIMULATION.start();
     initEventListeners();
+    updateLeagueModalTickets();
+	updateBoardNumbers(); // ✅ ДОБАВИТЬ
     updateDisplay();
   }
 
@@ -699,4 +831,3 @@ function startNextRoundAllLeagues() {
     init();
   }
 })();
-

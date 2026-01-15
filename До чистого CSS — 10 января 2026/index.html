@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!-- Version: 3.0.5 - Блоки в указанном порядке -->
+<html>
+  <head>
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Black vs White</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+	
+    <style>
+        body { font-family: -apple-system, sans-serif; }
+        #game { width: 100vw; height: 100vh; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- TOP-BAR (без названия) -->
+      <div class="top-bar">
+        <div class="top-controls">
+          <div class="random-CheckBox">
+            <span class="random-label">Рандом</span>
+            <label class="switch">
+              <input type="checkbox" id="randomCheckBox" checked />
+              <span class="slider"></span>
+            </label>
+            <input type="number" id="randomMaxInput" class="random-max-input" min="0" max="5000" step="100" value="200"/>
+          </div>
+
+          <label class="show-random-CheckBox">
+            <input type="checkbox" id="showRandomCheckBox" checked />
+            <span>Режим отладки</span>
+          </label>
+        </div>
+      </div>
+		<!-- 1. ВЕРХ - результаты прошлого раунда — Плашка чтобы тянуть вниз -->
+		<div class="pull-zone-top">
+		<div class="pull-handle-top">
+		  <a href="#results-panel" class="pull-line"></a>
+		  <div class="pull-dots"><span></span><span></span><span></span></div>
+		</div>
+		<div id="results-panel" class="results-panel-top hidden"></div>
+		</div>
+		
+      <!-- INFO-GAME (центр экрана) -->
+      <div class="info-game">
+        <div class="board-numbers" id="boardNumbers">
+			<div class="board-number-row">
+			  <span class="board-number test" data-league="test">#1</span>
+			</div>
+			<div class="board-number-row">
+			  <span class="board-number cash" data-league="cash">#127</span>
+			</div>
+			<div class="board-number-row">
+			  <span class="board-number ad" data-league="ad">#543</span>
+			</div>
+		</div>
+        <div class="time" id="timerText">9:57</div>
+
+        <!-- Билеты и результаты -->
+        <div class="bets" id="Bets">
+          <!-- Иконка Лиги в билетах (ВСЕГДА) -->
+          <img src="./pic/icon/tickets_test.svg" class="bets-icon" alt="Tickets"/>
+          <!-- Общее количество (ВСЕГДА) -->
+          <span class="bets-value" id="BetsValue">0</span>
+        </div>
+      </div>
+
+      <!-- ИГРОВОЕ ПОЛЕ -->
+      <div class="sides">
+	  
+        <!-- ЛЕВАЯ СТОРОНА -->
+        <div class="side left" id="leftSide">
+          <div class="side-inner">
+            <div class="side-gap"></div>
+            <div class="side-content">
+			
+              <!-- 1. РЕЗУЛЬТАТЫ НАВЕРХУ — Левая сторона [СКРЫТО → КОНЕЦ: ПОКАЗАТЬ] -->
+              <div class="side-results">
+                <div class="side-final-bets hidden" id="leftFinalBets">
+				  <!-- Проценты ЛЕВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
+					<span class="bets-left-percent hidden" id="leftPercent">0%</span>
+				<!-- Билеты ЛЕВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
+                  <span class="side-final-bets-value" id="leftFinalBetsValue">0</span>
+                </div>
+              </div>
+
+              <!-- 2. СТИКЕР Левой стороны(ВСЕГДА) -->
+              <img src="./pic/stikers/4.1 fire.svg" class="sticker" alt="Fire" />
+
+              <!-- 3. ЛИЧНЫЕ СТАВКИ [НАЧАЛО: СКРЫТО → КОНЕЦ: ПОКАЗАТЬ] -->
+              <div class="side-player-bets">
+                <div class="side-taps hidden" id="leftTaps">
+                  <span class="side-taps-value" id="leftTapsValue">0</span>
+                </div>
+              </div>
+            </div>
+            <div class="side-gap-down"></div>
+          </div>
+        </div>
+
+        <!-- ПРАВАЯ СТОРОНА -->
+        <div class="side right" id="rightSide">
+          <div class="side-inner">
+            <div class="side-gap"></div>
+            <div class="side-content">
+			
+              <!-- 1. РЕЗУЛЬТАТЫ НАВЕРХУ Правой стороны -->
+              <div class="side-results">
+                <div class="side-final-bets hidden" id="rightFinalBets">
+				<!-- Проценты ПРАВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
+				  <span class="bets-right-percent hidden" id="rightPercent">0%</span>
+				<!-- Билеты ПРАВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->  
+                  <span class="side-final-bets-value" id="rightFinalBetsValue">0</span>
+                </div>
+              </div>
+
+              <!-- 2. СТИКЕР Правой стороны-->
+              <img src="./pic/stikers/4.2 water.svg" class="sticker" alt="Water"/>
+
+              <!-- 3. ЛИЧНЫЕ СТАВКИ -->
+              <div class="side-player-bets">
+                <div class="side-taps hidden" id="rightTaps">
+                  <span class="side-taps-value" id="rightTapsValue">0</span>
+                </div>
+              </div>
+            </div>
+            <div class="side-gap-down"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- НИЖНИЕ ПАНЕЛИ (ТВОЙ ПОРЯДОК КОДА) -->
+		<div class="bottom-bars">
+			<!-- БАЛАНСЫ (накладываются на игровое поле) -->
+			<div class="player-balance-bar">
+		<div class="player-balance" id="walletAmount">$120</div>
+		<div class="tickets-balance active-league" id="ticketsBalance">
+			<img src="./pic/icon/tickets_test.svg" class="tickets-icon-small" alt="Tickets"/>
+			<span class="tickets-value clickable" id="ticketsValueDisplay">100</span>
+		</div>
+	  </div>
+	  
+	  
+		  <!-- 2. НИЗ - суперпризы (над .super-prizes-bar) — Плашка -->
+				<div class="pull-handle-bottom">
+				  <a href="#superprizes-panel" class="pull-line"></a>
+				  <div class="pull-dots"><span></span><span></span><span></span></div>
+				</div>
+				<div id="superprizes-panel" class="results-panel-bottom hidden"></div>
+
+			<!-- 2. ПАНЕЛЬ СУПЕР ПРИЗОВ (ВТОРОЙ БЛОК) -->
+			<div class="super-prizes-bar">
+        <span>Jackpot: ??? </span>
+		<div class="message" id="message">Разместите ставки</div>
+        <button id="nextButton">Следующий</button>
+      </div>
+
+			<!-- 3. МЕНЮ (САМЫЙ НИЗ) -->
+			<div class="menu-bar"> 
+        <img src="./pic/icon/icon_menu_person.svg" class="menu-icon" alt="Person" />
+        <img src="./pic/icon/icon_menu_ref.svg" class="menu-icon" alt="Ref"/>
+        <img src="./pic/icon/icon_menu_liderboard.svg" class="menu-icon" alt="Leaderboard"/>
+        <img src="./pic/icon/icon_menu_wallet.svg" class="menu-icon" alt="Wallet"/>
+        <img src="./pic/icon/icon_menu_history.svg" class="menu-icon" alt="History"/>
+        <img src="./pic/icon/icon_menu_setting.svg" class="menu-icon" alt="Settings"/>
+      </div>
+		</div>
+    </div>
+	<!-- МОДАЛКА ЛИГ - НОВЫЙ ДИЗАЙН -->
+	<div id="leagueModal" class="league-modal">
+	  <div class="league-modal-content">
+		<div class="league-buttons">
+		  <button class="league-btn test active" data-league="test">
+			<img src="./pic/icon/tickets_test.svg" class="league-icon" loading="lazy" />
+			<div class="league-tickets">100</div>
+		  </button>
+
+		  <button class="league-btn cash" data-league="cash">
+			<img src="./pic/icon/tickets_wood.svg" class="league-icon" loading="lazy" />
+			<div class="league-tickets">55</div>
+		  </button>
+
+		  <button class="league-btn ad" data-league="ad">
+			<img src="./pic/icon/tickets_ads.svg" class="league-icon" loading="lazy" />
+			<div class="league-tickets">103</div>
+		  </button>
+		</div>
+	  </div>
+	</div>
+
+
+    <script src="index.js"></script>
+	<script src="player.js"></script>
+  </body>
+</html>
