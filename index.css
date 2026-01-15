@@ -182,8 +182,8 @@ body {
   justify-content: stretch; cursor: pointer; transition: all 0.2s; position: relative;
   max-width: 250px;
 }
-.left { /*background: #5dadec;*/ }
-.right { /*background: #f8a624;*/ }
+.left {  background: #fff; }
+.right { background: #000; }
 .side.winner { filter: brightness(1.2); box-shadow: inset 0 0 0 8px #4caf50; }
 
 .side-inner { display: flex; flex-direction: column; width: 100%; height: 100%; }
