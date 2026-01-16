@@ -817,6 +817,7 @@ function startNextRoundAllLeagues() {
 	  } else {
 		window.addEventListener('gameReady', init);
 		console.log('⏳ Ждём @BvsWBot авторизацию...');
+		startGame(); // ❌ Убрать когда с игроками будет.
 	  }
 	}
     
