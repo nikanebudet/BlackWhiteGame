@@ -1,7 +1,7 @@
 /**
- * Version: "v3.0.27 - USD + USD-R cookies система"
- * - Каждая лига тикает независимо
- * - Переключение сохраняет состояние всех лиг
+ * Version: v3.0.27 - Полное сохранение состояния
+ * - Лига + ставки + время раунда + USD+USD-R
+ * - Перезагрузка = точное восстановление игры
 
 cd /X/YandexDisk/Game/BlackWhite
 git add .
@@ -140,17 +140,29 @@ let STATE = {
   randomMaxTickets: 200
 };
 
-// ⭐ ПОЛНАЯ СТРУКТУРА cookies (лига + ставки + время)
+// ⭐ ПОЛНАЯ СТРУКТУРА cookies (ФИКС ТАЙМЕРОВ!)
 STATE.cookies = {
-  version: '1.1',  // Обновили версию!
+  version: '1.1',
   lastUpdate: Date.now(),
   currentLeague: "test",
   playerLeftTickets: { test: 0, cash: 0, ad: 0 },
   playerRightTickets: { test: 0, cash: 0, ad: 0 },
   leaguesState: {
-    test: { timeLeft: 570, boardCurrent: 1, isRoundFinished: false },
-    cash: { timeLeft: 570, boardCurrent: 127, isRoundFinished: false },
-    ad: { timeLeft: 570, boardCurrent: 543, isRoundFinished: false }
+    test: { 
+      timeLeft: 570, boardCurrent: 1, 
+      isRoundFinished: false, isBetweenRounds: false,
+      simulationLeftVotes: 0, simulationRightVotes: 0 
+    },
+    cash: { 
+      timeLeft: 570, boardCurrent: 127, 
+      isRoundFinished: false, isBetweenRounds: false,
+      simulationLeftVotes: 0, simulationRightVotes: 0 
+    },
+    ad: { 
+      timeLeft: 570, boardCurrent: 543, 
+      isRoundFinished: false, isBetweenRounds: false,
+      simulationLeftVotes: 0, simulationRightVotes: 0 
+    }
   },
   player: {
     id: null, username: null, avatar: null,
@@ -843,7 +855,7 @@ function init() {
 
 function startGame() {
   // ⭐ 1. ЗАГРУЗКА ПОЛНОГО СОСТОЯНИЯ
-  COOKIE_MANAGER.loadAll();
+  COOKIE_MANAGER.loadAll();  // 1️⃣ Загрузка
   
   console.log('👤 Игрок:', window.STATE.tgPlayer);
   
@@ -912,13 +924,39 @@ const COOKIE_MANAGER = {
       if (data) {
         const parsed = JSON.parse(data);
         if (parsed.version === STATE.cookies.version) {
-          // ⭐ ВОССТАНАВЛИВАЕМ ПОЛНОЕ СОСТОЯНИЕ
+          // ⭐ БЕЗОПАСНОЕ восстановление состояния
           STATE.currentLeague = parsed.currentLeague || "test";
-          STATE.playerLeftTickets = parsed.playerLeftTickets || STATE.playerLeftTickets;
-          STATE.playerRightTickets = parsed.playerRightTickets || STATE.playerRightTickets;
-          STATE.leaguesState = parsed.leaguesState || STATE.leaguesState;
+          
+          // ⭐ Ставки игрока
+          STATE.playerLeftTickets = { 
+            test: 0, cash: 0, ad: 0, 
+            ...parsed.playerLeftTickets 
+          };
+          STATE.playerRightTickets = { 
+            test: 0, cash: 0, ad: 0, 
+            ...parsed.playerRightTickets 
+          };
+          
+          // ⭐ ПОЛНАЯ структура для КАЖДОЙ лиги
+          ['test', 'cash', 'ad'].forEach(league => {
+            if (parsed.leaguesState?.[league]) {
+              STATE.leaguesState[league] = {
+                boardCurrent: LEAGUES[league].boardCurrent,
+                simulationLeftVotes: 0,
+                simulationRightVotes: 0,
+                timeLeft: 570,
+                isRoundFinished: false,
+                isBetweenRounds: false,
+                ...parsed.leaguesState[league]  // Перезаписываем только сохранённое
+              };
+            }
+          });
+          
           STATE.superfunds = parsed.superfunds || STATE.superfunds;
-          STATE.cookies.player = { ...STATE.cookies.player, ...parsed.player };
+          STATE.cookies.player = { 
+            ...STATE.cookies.player, 
+            ...parsed.player 
+          };
           
           if (window.DEBUG_MODE) {
             console.log('📂 Восстановлено:', {
@@ -929,10 +967,14 @@ const COOKIE_MANAGER = {
             });
           }
           return true;
+        } else {
+          console.log('⚠️ Старая версия cookies → сброс');
+          localStorage.removeItem('BvsWGameState');
         }
       }
     } catch(e) {
-      console.error('❌ Ошибка загрузки cookies');
+      console.error('❌ Ошибка cookies → сброс');
+      localStorage.removeItem('BvsWGameState');
     }
     return false;
   },
