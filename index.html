@@ -58,6 +58,8 @@
 		
       <!-- INFO-GAME (центр экрана) -->
       <div class="info-game">
+
+		<!-- Номера столов во всех лигах сейчас играются -->
         <div class="board-numbers" id="boardNumbers">
 			<div class="board-number-row">
 			  <span class="board-number test" data-league="test">#1</span>
@@ -203,7 +205,7 @@
 	  </div>
 	</div>
 
-	<script src="player.js"></script>
-    <script src="index.js"></script>
-  </body>
+  <script src="auth-check.js"></script>  <!-- 1. Проверка TG (1 сек) -->
+  <script src="player.js"></script>      <!-- 2. TG Player данные -->
+  <script src="index.js"></script>       <!-- 3. ИГРА -->  </body>
 </html>

@@ -811,13 +811,18 @@ function startNextRoundAllLeagues() {
 // 10. ИНИЦИАЛИЗАЦИЯ
 //═══════════════════════════════════════════════════
   function init() {
-    console.log('🚀 3.0.26 - ПАРАЛЛЕЛЬНЫЕ ТАЙМЕРЫ ЛИГ!');
-	/ 🔥 1. TELEGRAM - ПЕРВЫМ ДЕЛОМ!
-	    // ✅ TG Player уже установлен player.js
-		  if (window.STATE?.tgPlayer?.id) {
-			console.log('👤 TG PLAYER ИЗ player.js:', window.STATE.tgPlayer);
-		  }
+	   if (window.STATE?.tgPlayer) {
+		console.log('🚀 3.0.26 - ИГРА СТАРТ (@BvsWBot)');
+		startGame();
+	  } else {
+		window.addEventListener('gameReady', init);
+		console.log('⏳ Ждём @BvsWBot авторизацию...');
+	  }
+	}
     
+function startGame() {
+	console.log('👤 Игрок:', window.STATE.tgPlayer);
+	// ВСЯ ТВОЯ ЛОГИКА ИГРЫ (лиги, таймеры, ставки)
     UTILS.updateTicketsDisplay();
     UTILS.updateBalanceDisplay();
     UTILS.switchLeague("test");
