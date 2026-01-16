@@ -840,56 +840,7 @@ function startNextRoundAllLeagues() {
 
 
 //═══════════════════════════════════════════════════
-// 10. ИНИЦИАЛИЗАЦИЯ
-//═══════════════════════════════════════════════════
-function init() {
-  if (window.STATE?.tgPlayer) {
-    console.log('🚀 3.0.27 - ИГРА СТАРТ с cookies (@BvsWBot)');
-    startGame();
-  } else {
-    window.addEventListener('gameReady', init);
-    console.log('⏳ Ждём @BvsWBot авторизацию...');
-    startGame();
-  }
-}
-
-function startGame() {
-  // ⭐ 1. ЗАГРУЗКА ПОЛНОГО СОСТОЯНИЯ
-  COOKIE_MANAGER.loadAll();  // 1️⃣ Загрузка
-  
-  console.log('👤 Игрок:', window.STATE.tgPlayer);
-  
-  // ⭐ 2. ПРИМЕНЕНИЕ СОСТОЯНИЯ К UI
-  UTILS.updateTicketsDisplay();
-  UTILS.updateBalanceDisplay();
-  
-  // ⭐ 3. ОТКРЫТЬ ПОСЛЕДНЮЮ ЛИГУ + состояние
-  UTILS.switchLeague(STATE.currentLeague);
-  
-  MASTER_TIMER.start();
-  initTelegramPlayer();
-  
-  STATE.isRandomMode = true;
-  STATE.isDebugMode = true;
-  if (ELEMENTS.randomCheckBoxEl) ELEMENTS.randomCheckBoxEl.checked = true;
-  if (ELEMENTS.debugCheckBoxEl) ELEMENTS.debugCheckBoxEl.checked = true;
-  
-  PLAYER_SIMULATION.start();
-  initEventListeners();
-  updateLeagueModalTickets();
-  updateBoardNumbers();
-  updateDisplay();
-  
-  // ⭐ 4. АВТОСЕЙВ
-  setInterval(COOKIE_MANAGER.saveAll, 10000);
-  window.addEventListener('beforeunload', COOKIE_MANAGER.saveAll);
-  
-  console.log('🎮 ИГРА ЗАГРУЖЕНА с ПОЛНЫМ состоянием!');
-}
-
-
-//═══════════════════════════════════════════════════
-// 11. COOKIE MANAGER (ИСПРАВЛЕННЫЙ)  
+// 10. COOKIE MANAGER (ИСПРАВЛЕННЫЙ)  
 //═══════════════════════════════════════════════════
 const COOKIE_MANAGER = {
   saveAll() {
@@ -947,10 +898,59 @@ const COOKIE_MANAGER = {
 };
 
 // 🔥 КОНЕЦ ФАЙЛА - ИНИЦИАЛИЗАЦИЯ
-function init() {
+/*function init() {
   console.log('🚀 Инициализация v3.0.27');
   startGame();
-}
+}*/
 
 init();  // ← АВТОЗАПУСК
+//═══════════════════════════════════════════════════
+// 11. ИНИЦИАЛИЗАЦИЯ
+//═══════════════════════════════════════════════════
+function init() {
+  if (window.STATE?.tgPlayer) {
+    console.log('🚀 3.0.27 - ИГРА СТАРТ с cookies (@BvsWBot)');
+    startGame();
+  } else {
+    window.addEventListener('gameReady', init);
+    console.log('⏳ Ждём @BvsWBot авторизацию...');
+    startGame();
+  }
+}
+
+function startGame() {
+  // ⭐ 1. ЗАГРУЗКА ПОЛНОГО СОСТОЯНИЯ
+  COOKIE_MANAGER.loadAll();  // 1️⃣ Загрузка
+  
+  console.log('👤 Игрок:', window.STATE.tgPlayer);
+  
+  // ⭐ 2. ПРИМЕНЕНИЕ СОСТОЯНИЯ К UI
+  UTILS.updateTicketsDisplay();
+  UTILS.updateBalanceDisplay();
+  
+  // ⭐ 3. ОТКРЫТЬ ПОСЛЕДНЮЮ ЛИГУ + состояние
+  UTILS.switchLeague(STATE.currentLeague);
+  
+  MASTER_TIMER.start();
+  initTelegramPlayer();
+  
+  STATE.isRandomMode = true;
+  STATE.isDebugMode = true;
+  if (ELEMENTS.randomCheckBoxEl) ELEMENTS.randomCheckBoxEl.checked = true;
+  if (ELEMENTS.debugCheckBoxEl) ELEMENTS.debugCheckBoxEl.checked = true;
+  
+  PLAYER_SIMULATION.start();
+  initEventListeners();
+  updateLeagueModalTickets();
+  updateBoardNumbers();
+  updateDisplay();
+  
+  // ⭐ 4. АВТОСЕЙВ
+  setInterval(COOKIE_MANAGER.saveAll, 10000);
+  window.addEventListener('beforeunload', COOKIE_MANAGER.saveAll);
+  
+  console.log('🎮 ИГРА ЗАГРУЖЕНА с ПОЛНЫМ состоянием!');
+}
+
+
 })();  // ← ГЛАВНЫЕ 2 СТРОКИ!
