@@ -889,13 +889,12 @@ function startGame() {
 
 
 //═══════════════════════════════════════════════════
-// 11. COOKIE MANAGER  
+// 11. COOKIE MANAGER (ИСПРАВЛЕННЫЙ)  
 //═══════════════════════════════════════════════════
 const COOKIE_MANAGER = {
   saveAll() {
     UTILS.convertUsdR();
     
-    // ⭐ СОХРАНЯЕМ ПОЛНОЕ СОСТОЯНИЕ ИГРЫ
     const data = {
       version: STATE.cookies.version,
       lastUpdate: Date.now(),
@@ -908,81 +907,49 @@ const COOKIE_MANAGER = {
     };
     
     localStorage.setItem('BvsWGameState', JSON.stringify(data));
-    if (window.DEBUG_MODE) {
-      console.log('💾 Полное состояние:', {
-        league: data.currentLeague,
-        left: data.playerLeftTickets[data.currentLeague],
-        right: data.playerRightTickets[data.currentLeague],
-        timeLeft: data.leaguesState[data.currentLeague].timeLeft
-      });
-    }
+    console.log('💾 Сохранено:', data.currentLeague);
   },
-  
+
   loadAll() {
     try {
       const data = localStorage.getItem('BvsWGameState');
       if (data) {
         const parsed = JSON.parse(data);
-        if (parsed.version === STATE.cookies.version) {
-          // ⭐ БЕЗОПАСНОЕ восстановление состояния
+        if (parsed.version === '1.1') {
           STATE.currentLeague = parsed.currentLeague || "test";
+          STATE.playerLeftTickets = parsed.playerLeftTickets || { test: 0, cash: 0, ad: 0 };
+          STATE.playerRightTickets = parsed.playerRightTickets || { test: 0, cash: 0, ad: 0 };
           
-          // ⭐ Ставки игрока
-          STATE.playerLeftTickets = { 
-            test: 0, cash: 0, ad: 0, 
-            ...parsed.playerLeftTickets 
-          };
-          STATE.playerRightTickets = { 
-            test: 0, cash: 0, ad: 0, 
-            ...parsed.playerRightTickets 
-          };
-          
-          // ⭐ ПОЛНАЯ структура для КАЖДОЙ лиги
           ['test', 'cash', 'ad'].forEach(league => {
-            if (parsed.leaguesState?.[league]) {
-              STATE.leaguesState[league] = {
-                boardCurrent: LEAGUES[league].boardCurrent,
-                simulationLeftVotes: 0,
-                simulationRightVotes: 0,
-                timeLeft: 570,
-                isRoundFinished: false,
-                isBetweenRounds: false,
-                ...parsed.leaguesState[league]  // Перезаписываем только сохранённое
-              };
-            }
+            STATE.leaguesState[league] = {
+              ...STATE.leaguesState[league],
+              ...parsed.leaguesState?.[league]
+            };
           });
           
-          STATE.superfunds = parsed.superfunds || STATE.superfunds;
-          STATE.cookies.player = { 
-            ...STATE.cookies.player, 
-            ...parsed.player 
-          };
-          
-          if (window.DEBUG_MODE) {
-            console.log('📂 Восстановлено:', {
-              league: STATE.currentLeague,
-              left: STATE.playerLeftTickets[STATE.currentLeague],
-              right: STATE.playerRightTickets[STATE.currentLeague],
-              timeLeft: STATE.leaguesState[STATE.currentLeague].timeLeft
-            });
-          }
+          STATE.cookies.player = { ...STATE.cookies.player, ...parsed.player };
+          console.log('📂 Загружено:', STATE.currentLeague);
           return true;
-        } else {
-          console.log('⚠️ Старая версия cookies → сброс');
-          localStorage.removeItem('BvsWGameState');
         }
       }
     } catch(e) {
-      console.error('❌ Ошибка cookies → сброс');
+      console.error('❌ Cookies сброшены');
       localStorage.removeItem('BvsWGameState');
     }
     return false;
   },
-  
+
   addUsdR(amount) {
     STATE.cookies.player.usdR += amount;
-    if (STATE.cookies.player.usdR < 0) STATE.cookies.player.usdR = 0;
-    else UTILS.convertUsdR();
+    if (STATE.cookies.player.usdR >= 100) UTILS.convertUsdR();
     COOKIE_MANAGER.saveAll();
   }
 };
+
+// 🔥 КОНЕЦ ФАЙЛА - ИНИЦИАЛИЗАЦИЯ
+function init() {
+  console.log('🚀 Инициализация v3.0.27');
+  startGame();
+}
+
+init();  // ← АВТОЗАПУСК
