@@ -106,39 +106,30 @@ const CONSTANTS = {
   ROUND_DURATION_SEC: 570,
   BETWEEN_SEC: 30,
   USD_CENTS: 100,
-  // ⭐ НОВЫЕ КОНСТАНТЫ ЛОГИКИ ПОБЕДЫ
-  EXTRA_ROUND_SEC: 570,        // Продление при < 3 билетов
-  MIN_BETS_TRIGGER: 3,         // Минимум билетов для раунда
-  WIN_THRESHOLD: 45,           // Порог слабой стороны (%)
-  SUPERFUNDS_DEFAULT: [1000, 10000, 100000, 1000000],  // 1К, 10К, 100К, 1М
-  SUPERFUNDS_SPLIT: [25, 25, 25, 25]  // По 25% по умолчанию
+  EXTRA_ROUND_SEC: 570,
+  MIN_BETS_TRIGGER: 3,
+  WIN_THRESHOLD: 45,
+  SUPERFUNDS_DEFAULT: [1000, 10000, 100000, 1000000],
+  SUPERFUNDS_SPLIT: [25, 25, 25, 25]
 };
 
-// ⭐ ГЛОБАЛЬНЫЙ DEBUG MODE
 window.DEBUG_MODE = false;
 
 let STATE = {
   currentLeague: "test",
   cashBalanceCents: 12000,
   tgPlayer: { id: null, username: null, photo: null },
-    
-  // ✅ СОСТОЯНИЕ КАЖДОЙ ЛИГИ (включая timeLeft)
   leaguesState: {
     test: { boardCurrent: 1, simulationLeftVotes: 0, simulationRightVotes: 0, timeLeft: 570, isRoundFinished: false, isBetweenRounds: false },
     cash: { boardCurrent: 127, simulationLeftVotes: 0, simulationRightVotes: 0, timeLeft: 570, isRoundFinished: false, isBetweenRounds: false },
     ad: { boardCurrent: 543, simulationLeftVotes: 0, simulationRightVotes: 0, timeLeft: 570, isRoundFinished: false, isBetweenRounds: false }
   },
-    
-  // ⭐ НОВОЕ: СУПЕРФОНДЫ для каждой лиги
   superfunds: {
     test: { '1K': 0, '10K': 0, '100K': 0, '1M': 0 },
     cash: { '1K': 0, '10K': 0, '100K': 0, '1M': 0 },
     ad: { '1K': 0, '10K': 0, '100K': 0, '1M': 0 }
   },
-    
-  // ⭐ ГЛОБАЛЬНЫЕ таймеры для лиг
   leagueTimers: { test: null, cash: null, ad: null },
-    
   playerSimulationId: null,
   playerLeftTickets: { test: 0, cash: 0, ad: 0 },
   playerRightTickets: { test: 0, cash: 0, ad: 0 },
@@ -149,16 +140,21 @@ let STATE = {
   randomMaxTickets: 200
 };
 
-// ⭐ USD + USD-R COOKIES СТРУКТУРА
+// ⭐ ПОЛНАЯ СТРУКТУРА cookies (лига + ставки + время)
 STATE.cookies = {
-  version: '1.0',
+  version: '1.1',  // Обновили версию!
   lastUpdate: Date.now(),
+  currentLeague: "test",
+  playerLeftTickets: { test: 0, cash: 0, ad: 0 },
+  playerRightTickets: { test: 0, cash: 0, ad: 0 },
+  leaguesState: {
+    test: { timeLeft: 570, boardCurrent: 1, isRoundFinished: false },
+    cash: { timeLeft: 570, boardCurrent: 127, isRoundFinished: false },
+    ad: { timeLeft: 570, boardCurrent: 543, isRoundFinished: false }
+  },
   player: {
-    id: null, 
-    username: null, 
-    avatar: null,
-    usd: 120,        // USD (целые)
-    usdR: 0,         // USD-R остаток (0-99)
+    id: null, username: null, avatar: null,
+    usd: 120, usdR: 0,
     tickets: { test: 100, cash: 55, ad: 103 }
   }
 };
@@ -831,14 +827,12 @@ function startNextRoundAllLeagues() {
 }
 
 
-
-
 //═══════════════════════════════════════════════════
 // 10. ИНИЦИАЛИЗАЦИЯ
 //═══════════════════════════════════════════════════
 function init() {
   if (window.STATE?.tgPlayer) {
-    console.log('🚀 3.0.26 - ИГРА СТАРТ (@BvsWBot)');
+    console.log('🚀 3.0.27 - ИГРА СТАРТ с cookies (@BvsWBot)');
     startGame();
   } else {
     window.addEventListener('gameReady', init);
@@ -848,16 +842,18 @@ function init() {
 }
 
 function startGame() {
-  // ⭐ 1. COOKIES ЗАГРУЗКА (ПЕРВЫЙ ПРИОРИТЕТ!)
+  // ⭐ 1. ЗАГРУЗКА ПОЛНОГО СОСТОЯНИЯ
   COOKIE_MANAGER.loadAll();
   
   console.log('👤 Игрок:', window.STATE.tgPlayer);
   
-  // ⭐ 2. ОБНОВЛЕНИЕ UI ИЗ COOKIES
+  // ⭐ 2. ПРИМЕНЕНИЕ СОСТОЯНИЯ К UI
   UTILS.updateTicketsDisplay();
-  UTILS.updateBalanceDisplay();  // ⭐ НОВЫЙ USD+USD-R баланс
+  UTILS.updateBalanceDisplay();
   
-  UTILS.switchLeague("test");
+  // ⭐ 3. ОТКРЫТЬ ПОСЛЕДНЮЮ ЛИГУ + состояние
+  UTILS.switchLeague(STATE.currentLeague);
+  
   MASTER_TIMER.start();
   initTelegramPlayer();
   
@@ -872,11 +868,11 @@ function startGame() {
   updateBoardNumbers();
   updateDisplay();
   
-  // ⭐ 3. АВТОСЕЙВ (каждые 10 сек + при выходе)
+  // ⭐ 4. АВТОСЕЙВ
   setInterval(COOKIE_MANAGER.saveAll, 10000);
   window.addEventListener('beforeunload', COOKIE_MANAGER.saveAll);
   
-  console.log('🎮 ИГРА ЗАПУЩЕНА с cookies поддержкой!');
+  console.log('🎮 ИГРА ЗАГРУЖЕНА с ПОЛНЫМ состоянием!');
 }
 
 
@@ -887,15 +883,26 @@ const COOKIE_MANAGER = {
   saveAll() {
     UTILS.convertUsdR();
     
+    // ⭐ СОХРАНЯЕМ ПОЛНОЕ СОСТОЯНИЕ ИГРЫ
     const data = {
       version: STATE.cookies.version,
       lastUpdate: Date.now(),
+      currentLeague: STATE.currentLeague,
+      playerLeftTickets: STATE.playerLeftTickets,
+      playerRightTickets: STATE.playerRightTickets,
+      leaguesState: STATE.leaguesState,
+      superfunds: STATE.superfunds,
       player: STATE.cookies.player
     };
     
     localStorage.setItem('BvsWGameState', JSON.stringify(data));
     if (window.DEBUG_MODE) {
-      console.log('💾 Сохранено:', data.player.usd, 'USD +', data.player.usdR, 'USD-R');
+      console.log('💾 Полное состояние:', {
+        league: data.currentLeague,
+        left: data.playerLeftTickets[data.currentLeague],
+        right: data.playerRightTickets[data.currentLeague],
+        timeLeft: data.leaguesState[data.currentLeague].timeLeft
+      });
     }
   },
   
@@ -905,19 +912,21 @@ const COOKIE_MANAGER = {
       if (data) {
         const parsed = JSON.parse(data);
         if (parsed.version === STATE.cookies.version) {
-          STATE.cookies.player = { 
-            ...STATE.cookies.player, 
-            ...parsed.player 
-          };
-          
-          // Нормализация USD-R (если >99)
-          if (STATE.cookies.player.usdR >= 100 || STATE.cookies.player.usdR < 0) {
-            UTILS.convertUsdR();
-            COOKIE_MANAGER.saveAll();
-          }
+          // ⭐ ВОССТАНАВЛИВАЕМ ПОЛНОЕ СОСТОЯНИЕ
+          STATE.currentLeague = parsed.currentLeague || "test";
+          STATE.playerLeftTickets = parsed.playerLeftTickets || STATE.playerLeftTickets;
+          STATE.playerRightTickets = parsed.playerRightTickets || STATE.playerRightTickets;
+          STATE.leaguesState = parsed.leaguesState || STATE.leaguesState;
+          STATE.superfunds = parsed.superfunds || STATE.superfunds;
+          STATE.cookies.player = { ...STATE.cookies.player, ...parsed.player };
           
           if (window.DEBUG_MODE) {
-            console.log('📂 Загружено:', STATE.cookies.player.usd, 'USD +', STATE.cookies.player.usdR, 'USD-R');
+            console.log('📂 Восстановлено:', {
+              league: STATE.currentLeague,
+              left: STATE.playerLeftTickets[STATE.currentLeague],
+              right: STATE.playerRightTickets[STATE.currentLeague],
+              timeLeft: STATE.leaguesState[STATE.currentLeague].timeLeft
+            });
           }
           return true;
         }
@@ -930,11 +939,8 @@ const COOKIE_MANAGER = {
   
   addUsdR(amount) {
     STATE.cookies.player.usdR += amount;
-    if (STATE.cookies.player.usdR < 0) {
-      STATE.cookies.player.usdR = 0;
-    } else {
-      UTILS.convertUsdR(); // Автоконвертация 100 USD-R → +1 USD
-    }
+    if (STATE.cookies.player.usdR < 0) STATE.cookies.player.usdR = 0;
+    else UTILS.convertUsdR();
     COOKIE_MANAGER.saveAll();
   }
 };
