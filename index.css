@@ -68,8 +68,8 @@ body {
 .tg-text { display: flex; flex-direction: column; line-height: 1.1; }
 .tg-id { color: #4caf50; font-weight: 900; font-size: 11px; }
 .tg-nickname { color: #fff; opacity: 0.9; font-size: 12px; }
-.tg-player-info.hidden { opacity: 0.3; transform: scale(0.8); }
-.tg-player-info:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(76,175,80,0.4); }
+.tg-player-info.hidden { opacity: 0.3; transform: scale(1.0); }
+.tg-player-info:hover { transform: scale(1.00); box-shadow: 0 6px 20px rgba(76,175,80,0.4); }
 
 /* ════════════════════════════════════════════════════ */
 /* 3. INFO-GAME (центр экрана) */
@@ -363,12 +363,12 @@ body {
 }
 
 .league-btn:hover { 
-  transform: scale(1.05);
+  transform: scale(1.01);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 .league-btn.active { 
-  transform: translateY(4px) scale(0.97);  /* 🎮 ГЛУБОКО ПРОДАВЛЕНА */
+  transform: translateY(4px) scale(0.99);  /* 🎮 ГЛУБОКО ПРОДАВЛЕНА */
   box-shadow: 
     /* СНАРУЖИ */
     0 2px 6px rgba(0, 0, 0, 0.8), 

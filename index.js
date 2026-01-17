@@ -142,7 +142,7 @@ let STATE = {
 
 // ⭐ ПОЛНАЯ СТРУКТУРА cookies (ФИКС ТАЙМЕРОВ!)
 STATE.cookies = {
-  version: '1.1',
+  version: '1.2',
   lastUpdate: Date.now(),
   currentLeague: "test",
   playerLeftTickets: { test: 0, cash: 0, ad: 0 },
@@ -168,6 +168,10 @@ STATE.cookies = {
     id: null, username: null, avatar: null,
     usd: 120, usdR: 0,
     tickets: { test: 100, cash: 55, ad: 103 }
+  }
+  // ⭐ НОВОЕ - общее кол-во билетов на столе
+  totalTickets: { 
+    test: 0, cash: 0, ad: 0 
   }
 };
 //═══════════════════════════════════════════════════
@@ -323,7 +327,7 @@ const UTILS = {
 };
   
 //═══════════════════════════════════════════════════
-// 5.2. БЛОК 2: УТИЛИТЫ SUPERFUNDS
+// 5.1. БЛОК : УТИЛИТЫ SUPERFUNDS
 //═══════════════════════════════════════════════════
   const SUPERFUNDS = {
     isEnabled(league) {
@@ -354,7 +358,7 @@ const UTILS = {
   
 
 //═══════════════════════════════════════════════════
-// 5. СИМУЛЯЦИЯ ИГРОКОВ
+// 5.2. СИМУЛЯЦИЯ ИГРОКОВ
 //═══════════════════════════════════════════════════
   const PLAYER_SIMULATION = {
     interval: 2500,
@@ -392,7 +396,7 @@ const UTILS = {
 
 
 //═══════════════════════════════════════════════════
-// 5.1. Авторизация в телеграмме
+// 5.3. Авторизация в телеграмме
 //═══════════════════════════════════════════════════
 
 function initTelegramPlayer() {
@@ -840,104 +844,176 @@ function startNextRoundAllLeagues() {
 
 
 //═══════════════════════════════════════════════════
-// 10. COOKIE MANAGER (ИСПРАВЛЕННЫЙ)  
+// 10. COOKIE MANAGER (ОБНОВЛЕННЫЙ - РЕЖИМ ОТЛАДКИ)
 //═══════════════════════════════════════════════════
 const COOKIE_MANAGER = {
   saveAll() {
     UTILS.convertUsdR();
     
-    const data = {
-      version: STATE.cookies.version,
-      lastUpdate: Date.now(),
+    const saveData = {
+      version: '1.3', // ⭐ НОВАЯ ВЕРСИЯ
+      timestamp: Date.now(),
       currentLeague: STATE.currentLeague,
-      playerLeftTickets: STATE.playerLeftTickets,
-      playerRightTickets: STATE.playerRightTickets,
-      leaguesState: STATE.leaguesState,
-      superfunds: STATE.superfunds,
-      player: STATE.cookies.player
+      
+      // ⭐ ОБЩЕЕ КОЛИЧЕСТВО БИЛЕТОВ ПО ЛИГАМ
+      ticketsWhole: {
+        test: UTILS.getLeagueData('test').ticketsWhole,
+        cash: UTILS.getLeagueData('cash').ticketsWhole,
+        ad: UTILS.getLeagueData('ad').ticketsWhole
+      },
+      
+      // ⭐ СТАВКИ ИГРОКА ПО СТОРОНАМ (ОТЛАДКА)
+      playerLeftTickets: { ...STATE.playerLeftTickets },
+      playerRightTickets: { ...STATE.playerRightTickets },
+      
+      // ⭐ СОСТОЯНИЕ ЛИГ (таймеры + симуляция)
+      leaguesState: { ...STATE.leaguesState },
+      
+      // Баланс
+      player: { 
+		/*usd: STATE.cookies.player.usd,
+		usdR: STATE.cookies.player.usdR,*/
+		...STATE.cookies.player,
+		tickets: {
+        test: UTILS.getLeagueData('test').ticketsWhole,
+        cash: UTILS.getLeagueData('cash').ticketsWhole,
+        ad: UTILS.getLeagueData('ad').ticketsWhole
+		}
+	  },
+	  superfunds: { ...STATE.superfunds }
     };
     
-    localStorage.setItem('BvsWGameState', JSON.stringify(data));
-    console.log('💾 Сохранено:', data.currentLeague);
+    localStorage.setItem('BvsWGameState', JSON.stringify(saveData));
+    
+    // ⭐ ЛОГИРОВАНИЕ ТОЛЬКО В ОТЛАДКЕ
+    if (STATE.isDebugMode) {
+      console.log('💾 СОХРАНЕНО (отладка):', {
+        league: saveData.currentLeague,
+        tickets: saveData.ticketsWhole,
+        leftBets: saveData.playerLeftTickets,
+        rightBets: saveData.playerRightTickets,
+		totalTimeLeft: Object.values(saveData.leaguesState).map(s => s.timeLeft)
+      });
+    }
   },
 
   loadAll() {
     try {
       const data = localStorage.getItem('BvsWGameState');
-      if (data) {
-        const parsed = JSON.parse(data);
-        if (parsed.version === '1.1') {
-          STATE.currentLeague = parsed.currentLeague || "test";
-          STATE.playerLeftTickets = parsed.playerLeftTickets || { test: 0, cash: 0, ad: 0 };
-          STATE.playerRightTickets = parsed.playerRightTickets || { test: 0, cash: 0, ad: 0 };
-          
-          ['test', 'cash', 'ad'].forEach(league => {
-            STATE.leaguesState[league] = {
-              ...STATE.leaguesState[league],
-              ...parsed.leaguesState?.[league]
-            };
-          });
-          
-          STATE.cookies.player = { ...STATE.cookies.player, ...parsed.player };
-          console.log('📂 Загружено:', STATE.currentLeague);
-          return true;
-        }
+      if (!data) return false;
+      
+      const parsed = JSON.parse(data);
+      
+      // ✅ ПРОВЕРКА АКТУАЛЬНОСТИ (последние 10 минут)
+      if (Date.now() - parsed.timestamp > 10 * 60 * 1000) {
+        console.log('⏰ Cookies устарели (>10 мин), сбрасываем');
+        localStorage.removeItem('BvsWGameState');
+        return false;
       }
+      
+      if (parsed.version !== '1.3') {
+        console.log('📱 Неверная версия cookies, сбрасываем');
+        localStorage.removeItem('BvsWGameState');
+        return false;
+      }
+      
+      // ⭐ ВОССТАНОВЛЕНИЕ ОБЩЕГО КОЛИЧЕСТВА БИЛЕТОВ ПО ЛИГАМ
+      ['test', 'cash', 'ad'].forEach(league => {
+        const dataLeague = UTILS.getLeagueData(league);
+        dataLeague.ticketsWhole = parsed.ticketsWhole[league] || 100;
+      });
+      
+      // ⭐ В РЕЖИМЕ ОТЛАДКИ - восстанавливаем ставки по сторонам
+      if (STATE.isDebugMode) {
+        STATE.playerLeftTickets = parsed.playerLeftTickets || { test: 0, cash: 0, ad: 0 };
+        STATE.playerRightTickets = parsed.playerRightTickets || { test: 0, cash: 0, ad: 0 };
+        console.log('🔍 ОТЛАДКА: Восстановлены ставки L:', STATE.playerLeftTickets, 'R:', STATE.playerRightTickets);
+      }
+      
+	   // ⭐ ВОССТАНОВЛЕНИЕ БАЛАНСА ИГРОКА
+      if (parsed.player) {
+        STATE.cookies.player.usd = parsed.player.usd || 120;
+        STATE.cookies.player.usdR = parsed.player.usdR || 0;
+        console.log('✅ Восстановлен баланс билетов:', parsed.ticketsWhole);
+      }
+
+      // Остальное состояние лиг
+      STATE.currentLeague = parsed.currentLeague || 'test';
+      STATE.leaguesState = parsed.leaguesState || STATE.leaguesState;
+      STATE.cookies.player = parsed.player || STATE.cookies.player;
+	  STATE.superfunds = parsed.superfunds || STATE.superfunds;
+      
+      console.log('✅ Cookies загружены (время:', new Date(parsed.timestamp).toLocaleTimeString(), ', лига:',STATE.currentLeague,', билеты:',parsed.ticketsWhole,')');
+      return true;
+      
     } catch(e) {
-      console.error('❌ Cookies сброшены');
+      console.error('❌ Ошибка загрузки cookies:', e);
       localStorage.removeItem('BvsWGameState');
+      return false;
     }
-    return false;
   },
 
-  addUsdR(amount) {
-    STATE.cookies.player.usdR += amount;
-    if (STATE.cookies.player.usdR >= 100) UTILS.convertUsdR();
-    COOKIE_MANAGER.saveAll();
+  // ⭐ ТЕСТОВЫЙ МЕТОД (только отладка)
+  clearAll() {
+    if (STATE.isDebugMode) {
+      localStorage.removeItem('BvsWGameState');
+      console.log('🗑️ Cookies очищены');
+      location.reload();
+    }
+  },
+
+  // ⭐ ПОЛУЧИТЬ ТЕКУЩИЙ СТАТУС (отладка)
+  getStatus() {
+    if (!STATE.isDebugMode) return;
+    const data = localStorage.getItem('BvsWGameState');
+    if (data) {
+      const parsed = JSON.parse(data);
+      console.table({
+        'Время сохранения': new Date(parsed.timestamp).toLocaleString(),
+        'Лига': parsed.currentLeague,
+        'Билеты TEST': parsed.ticketsWhole.test,
+        'Билеты CASH': parsed.ticketsWhole.cash,
+        'Билеты AD': parsed.ticketsWhole.ad
+      });
+    }
   }
 };
 
-// 🔥 КОНЕЦ ФАЙЛА - ИНИЦИАЛИЗАЦИЯ
-/*function init() {
-  console.log('🚀 Инициализация v3.0.27');
-  startGame();
-}*/
-
-init();  // ← АВТОЗАПУСК
 //═══════════════════════════════════════════════════
-// 11. ИНИЦИАЛИЗАЦИЯ
+// 11. ИНИЦИАЛИЗАЦИЯ (ОБНОВЛЕННАЯ)
 //═══════════════════════════════════════════════════
 function init() {
+  console.log('🚀 Black vs White v3.0.28 - Загрузка...');
+  
+  // ⭐ 1. ЗАГРУЗКА СОСТОЯНИЯ ПРИ БЫСТРОЙ ПЕРЕЗАГРУЗКЕ
+  const cookiesLoaded = COOKIE_MANAGER.loadAll();
+  
   if (window.STATE?.tgPlayer) {
-    console.log('🚀 3.0.27 - ИГРА СТАРТ с cookies (@BvsWBot)');
-    startGame();
+    console.log('✅ TG Player готов → старт игры');
+    startGame(cookiesLoaded);
   } else {
-    window.addEventListener('gameReady', init);
-    console.log('⏳ Ждём @BvsWBot авторизацию...');
-    startGame();
+    window.addEventListener('gameReady', () => {
+      console.log('✅ gameReady → старт игры');
+      startGame(cookiesLoaded);
+    });
   }
 }
 
-function startGame() {
-  // ⭐ 1. ЗАГРУЗКА ПОЛНОГО СОСТОЯНИЯ
-  COOKIE_MANAGER.loadAll();  // 1️⃣ Загрузка
+function startGame(wasCookiesLoaded) {
+  console.log('🎮 startGame()', wasCookiesLoaded ? '📂 с cookies' : '🆕 новый сеанс');
   
-  console.log('👤 Игрок:', window.STATE.tgPlayer);
-  
-  // ⭐ 2. ПРИМЕНЕНИЕ СОСТОЯНИЯ К UI
+  // Применяем загруженное состояние к UI
   UTILS.updateTicketsDisplay();
   UTILS.updateBalanceDisplay();
-  
-  // ⭐ 3. ОТКРЫТЬ ПОСЛЕДНЮЮ ЛИГУ + состояние
   UTILS.switchLeague(STATE.currentLeague);
   
+  // Запуск систем
   MASTER_TIMER.start();
   initTelegramPlayer();
   
-  STATE.isRandomMode = true;
-  STATE.isDebugMode = true;
-  if (ELEMENTS.randomCheckBoxEl) ELEMENTS.randomCheckBoxEl.checked = true;
-  if (ELEMENTS.debugCheckBoxEl) ELEMENTS.debugCheckBoxEl.checked = true;
+  // Настройки по умолчанию
+  STATE.isRandomMode = ELEMENTS.randomCheckBoxEl?.checked ?? true;
+  STATE.isDebugMode = ELEMENTS.debugCheckBoxEl?.checked ?? true;
   
   PLAYER_SIMULATION.start();
   initEventListeners();
@@ -945,12 +1021,25 @@ function startGame() {
   updateBoardNumbers();
   updateDisplay();
   
-  // ⭐ 4. АВТОСЕЙВ
-  setInterval(COOKIE_MANAGER.saveAll, 10000);
+  // ⭐ АВТОСЕЙВ каждые 5 сек В РЕЖИМЕ ОТЛАДКИ
+  if (STATE.isDebugMode) {
+    setInterval(COOKIE_MANAGER.saveAll, 5000);
+  } else {
+    setInterval(COOKIE_MANAGER.saveAll, 10000);
+  }
+  
   window.addEventListener('beforeunload', COOKIE_MANAGER.saveAll);
   
-  console.log('🎮 ИГРА ЗАГРУЖЕНА с ПОЛНЫМ состоянием!');
+  if (wasCookiesLoaded) {
+    console.log('⭐ БЫСТРАЯ ПЕРЕЗАГРУЗКА: состояние восстановлено!');
+  } else {
+    console.log('🆕 НОВЫЙ СЕАНС: игра начата с чистого состояния');
+  }
 }
+
+// 🔥 АВТОЗАПУСК
+init();
+
 
 
 })();  // ← ГЛАВНЫЕ 2 СТРОКИ!
