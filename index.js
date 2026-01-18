@@ -70,48 +70,53 @@ const STATE = {
 //═══════════════════════════════════════════════════════
 // 2. DOM ЭЛЕМЕНТЫ
 //═══════════════════════════════════════════════════════
-const ELEMENTS = {
-  left: document.getElementById("leftSide"),
-  right: document.getElementById("rightSide"),
-  msg: document.getElementById("message"),
-  boardNumbers: document.querySelectorAll('.board-number[data-league]'),
-  timerText: document.getElementById("timerText"),
-  nextButton: document.getElementById("nextButton"),
+let ELEMENTS = {}; // ← ПУСТОЙ ОБЪЕКТ
 
-  // ✅ ФИКС: правильные селекторы для финальных ставок
-  leftFinalBetsEl: document.getElementById("leftFinalBets"),
-  rightFinalBetsEl: document.getElementById("rightFinalBets"),
-  leftFinalBetsValueEl: document.getElementById("leftFinalBetsValue"),
-  rightFinalBetsValueEl: document.getElementById("rightFinalBetsValue"),
-  leftPercentEl: document.getElementById("leftPercent"),
-  rightPercentEl: document.getElementById("rightPercent"),
+function initElements() {
 
-  BetsEl: document.getElementById("Bets"),
-  BetsValueEl: document.getElementById("BetsValue"),
-  ticketsBalanceEl: document.getElementById("ticketsBalance"),
-  ticketsIconSmall: document.querySelector(".tickets-icon-small"),
-  betsIcon: document.querySelector(".bets-icon"),
-  ticketsValueDisplayEl: document.getElementById("ticketsValueDisplay"),
-  walletAmountEl: document.getElementById("walletAmount"),
+	ELEMENTS = {
+	  left: document.getElementById("leftSide"),
+	  right: document.getElementById("rightSide"),
+	  msg: document.getElementById("message"),
+	  boardNumbers: document.querySelectorAll('.board-number[data-league]'),
+	  timerText: document.getElementById("timerText"),
+	  nextButton: document.getElementById("nextButton"),
 
-  // Отладка
-  randomCheckBoxEl: document.getElementById("randomCheckBox"),
-  randomMaxInputEl: document.getElementById("randomMaxInput"),
-  debugCheckBoxEl: document.getElementById("showRandomCheckBox"),
-  leagueModal: document.getElementById("leagueModal"),
+	  // ✅ ФИКС: правильные селекторы для финальных ставок
+	  leftFinalBetsEl: document.getElementById("leftFinalBets"),
+	  rightFinalBetsEl: document.getElementById("rightFinalBets"),
+	  leftFinalBetsValueEl: document.getElementById("leftFinalBetsValue"),
+	  rightFinalBetsValueEl: document.getElementById("rightFinalBetsValue"),
+	  leftPercentEl: document.getElementById("leftPercent"),
+	  rightPercentEl: document.getElementById("rightPercent"),
 
-  // ✅ ПРОГРЕССИВНЫЕ СТАВКИ
-  leftBetLoader: document.getElementById("leftBetLoader"),
-  rightBetLoader: document.getElementById("rightBetLoader"),
-  leftBetMain: document.getElementById("leftBetMain"),
-  rightBetMain: document.getElementById("rightBetMain"),
-  leftBetList: document.getElementById("leftBetList"),
-  rightBetList: document.getElementById("rightBetList"),
+	  BetsEl: document.getElementById("Bets"),
+	  BetsValueEl: document.getElementById("BetsValue"),
+	  ticketsBalanceEl: document.getElementById("ticketsBalance"),
+	  ticketsIconSmall: document.querySelector(".tickets-icon-small"),
+	  betsIcon: document.querySelector(".bets-icon"),
+	  ticketsValueDisplayEl: document.getElementById("ticketsValueDisplay"),
+	  walletAmountEl: document.getElementById("walletAmount"),
 
-  leftSticker: document.querySelector("#leftSide .sticker"),
-  rightSticker: document.querySelector("#rightSide .sticker")
-};
+	  // Отладка
+	  randomCheckBoxEl: document.getElementById("randomCheckBox"),
+	  randomMaxInputEl: document.getElementById("randomMaxInput"),
+	  debugCheckBoxEl: document.getElementById("showRandomCheckBox"),
+	  leagueModal: document.getElementById("leagueModal"),
 
+	  // ✅ ПРОГРЕССИВНЫЕ СТАВКИ
+	  leftBetLoader: document.getElementById("leftBetLoader"),
+	  rightBetLoader: document.getElementById("rightBetLoader"),
+	  leftBetMain: document.getElementById("leftBetMain"),
+	  rightBetMain: document.getElementById("rightBetMain"),
+	  leftBetList: document.getElementById("leftBetList"),
+	  rightBetList: document.getElementById("rightBetList"),
+
+	  leftSticker: document.querySelector("#leftSide .sticker"),
+	  rightSticker: document.querySelector("#rightSide .sticker")
+	};
+  console.log('✅ ELEMENTS:', Object.keys(ELEMENTS).length, 'элементов');
+}
 //═══════════════════════════════════════════════════════
 // 3. ЛИГИ (LEAGUES)
 //═══════════════════════════════════════════════════════
