@@ -586,7 +586,7 @@ function updateDisplay() {
 }
 
 //═══════════════════════════════════════════════════════
-// 12. COOKIE MANAGER + СОБЫТИЯ + ИНИЦИАЛИЗАЦИЯ
+// 12. COOKIE MANAGER
 //═══════════════════════════════════════════════════════
 const COOKIE_MANAGER = {
   saveAll() {
@@ -606,7 +606,7 @@ const COOKIE_MANAGER = {
       leaguesState: { ...STATE.leaguesState },
       player: STATE.cookies.player,
       superfunds: { ...STATE.superfunds },
-      playerBets: STATE.playerBets // ✅ Сохранение ставок
+      playerBets: STATE.playerBets
     };
 
     localStorage.setItem('BvsWGameState', JSON.stringify(saveData));
@@ -648,20 +648,20 @@ const COOKIE_MANAGER = {
   }
 };
 
+//═══════════════════════════════════════════════════════
+// 13. СОБЫТИЯ + ОБРАБОТЧИКИ
+//═══════════════════════════════════════════════════════
 function initEventListeners() {
-  // TG Player info
   document.getElementById('tgPlayerInfo')?.addEventListener('click', () => {
     if (STATE.tgPlayer.id) {
       Telegram?.WebApp?.showAlert(`ID: ${STATE.tgPlayer.id}\n@${STATE.tgPlayer.username}`);
     }
   });
 
-  // Основные клики
   ELEMENTS.left?.addEventListener("click", handleLeftClick);
   ELEMENTS.right?.addEventListener("click", handleRightClick);
   ELEMENTS.nextButton?.addEventListener("click", nextRound);
 
-  // ✅ ЕДИНЫЙ ОБРАБОТЧИК ЛИГ (без дублей!)
   document.querySelectorAll('[data-league], .tickets-value, .tickets-icon-small').forEach(el => {
     el.style.cursor = 'pointer';
     el.style.userSelect = 'none';
@@ -673,7 +673,6 @@ function initEventListeners() {
     });
   });
 
-  // Модалка лиг
   ELEMENTS.leagueModal?.querySelectorAll(".league-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const league = btn.dataset.league;
@@ -690,7 +689,6 @@ function initEventListeners() {
     }
   });
 
-  // Общие билеты → модалка
   [ELEMENTS.BetsValueEl, ELEMENTS.betsIcon].forEach(el => {
     if (el) {
       el.style.cursor = "pointer";
@@ -702,7 +700,6 @@ function initEventListeners() {
     }
   });
 
-  // Отладка
   ELEMENTS.randomCheckBoxEl?.addEventListener("change", () => {
     STATE.isRandomMode = ELEMENTS.randomCheckBoxEl.checked;
     if (STATE.isRandomMode) PLAYER_SIMULATION.start();
@@ -749,9 +746,12 @@ function handleRightClick() {
   }
 }
 
+
+//═══════════════════════════════════════════════════════
+// 14. РАУНДЫ + ИНИЦИАЛИЗАЦИЯ (СЕРВЕР-SAFE)
+//═══════════════════════════════════════════════════════
 function nextRound() {
   const league = STATE.currentLeague;
-
   if (!STATE.leaguesState[league].isRoundFinished) {
     console.log('🔄 ПРИНУДИТЕЛЬНО завершаем ВСЕ раунды...');
     ['test', 'cash', 'ad'].forEach(l => {
@@ -786,11 +786,9 @@ function nextRound() {
 
 function startNextRoundAllLeagues() {
   console.log('🚀 ЗАПУСК НОВЫХ РАУНДОВ ВО ВСЕХ ЛИГАХ');
-
   ['test', 'cash', 'ad'].forEach(league => {
     const data = LEAGUES[league];
     const leagueState = STATE.leaguesState[league];
-
     data.boardCurrent++;
     leagueState.isRoundFinished = false;
     leagueState.isBetweenRounds = false;
@@ -798,9 +796,8 @@ function startNextRoundAllLeagues() {
     leagueState.simulationRightVotes = 0;
     leagueState.timeLeft = CONSTANTS.ROUND_DURATION_SEC;
   });
-
   UTILS.switchLeague('test');
-  ELEMENTS.msg.textContent = "НОВЫЙ РАУНД!";
+  ELEMENTS.msg && (ELEMENTS.msg.textContent = "НОВЫЙ РАУНД!");
   PLAYER_SIMULATION.start();
 }
 
@@ -811,22 +808,24 @@ function updateLeagueModalTickets() {
     STATE.currentLeague = league;
     const ticketsRemain = UTILS.getCurrentTicketsWhole();
     STATE.currentLeague = prevLeague;
-
     const ticketsEl = btn.querySelector('.league-tickets');
     ticketsEl.textContent = ticketsRemain;
-
-    if (ticketsRemain <= 0) {
-      btn.classList.add('disabled');
-    } else {
-      btn.classList.remove('disabled');
-    }
+    if (ticketsRemain <= 0) btn.classList.add('disabled');
+    else btn.classList.remove('disabled');
   });
 }
 
-// 🎮 ИНИЦИАЛИЗАЦИЯ
-window.addEventListener('gameReady', () => {
-  console.log('🎮 Black vs White v4.0.0 - ИНИЦИАЛИЗАЦИЯ');
+// 🔥 НОВАЯ ИНИЦИАЛИЗАЦИЯ (v4.0.1 СЕРВЕР-SAFE)
+async function initGame() {
+  console.log('🎮 Black vs White v4.0.1 - ИНИЦИАЛИЗАЦИЯ');
   
+  await new Promise(resolve => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', resolve, { once: true });
+    } else resolve();
+  });
+
+  initElements(); // ← БЛОК 2 должен быть определен
   COOKIE_MANAGER.loadAll();
   initTelegramPlayer();
   initEventListeners();
@@ -834,7 +833,14 @@ window.addEventListener('gameReady', () => {
   MASTER_TIMER.start();
   updateDisplay();
   
-  if (STATE.isRandomMode) {
-    PLAYER_SIMULATION.start();
-  }
-});
+  if (STATE.isRandomMode) PLAYER_SIMULATION.start();
+  console.log('✅ ИГРА ГОТОВА | Лига:', STATE.currentLeague);
+}
+
+// ✅ ЗАПУСК
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGame);
+} else {
+  initGame();
+}
+window.addEventListener('gameReady', initGame);
