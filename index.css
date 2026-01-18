@@ -568,87 +568,72 @@ body {
 
 
 /* ════════════════════════════════════════════════════ */
-/* 9. ПРОГРЕССИВНЫЕ СТАВКИ + ФИКС СТИКЕРА              */
+/* 9. ФИКСИРОВАННАЯ СТРУКТУРА СТОРОН                  */
 /* ════════════════════════════════════════════════════ */
 .side-content {
-  flex: 2 0 0; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center;
-  justify-content: space-between; 
-  height: 100%; 
+  height: 100%;
   padding: 8px 0;
-  position: relative; /* ← Контейнер */
-  height: 100%; /* ← ФИКС */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* ЖЁСТКИЙ РАСПРЕДЕЛЁННЫЙ ПРОСТРАНСТВО */
+  justify-content: space-between;
 }
 
-.sticker {
-  width: 50%; 
-  max-width: 100%; 
-  height: auto; 
+.side-results {     /* 1. ПРОЦЕНТ + БИЛЕТЫ */
+  flex: 0 0 auto;   /* ← Фиксированный размер */
+}
+
+.sticker {          /* 2. СТИКЕР */
+  flex: 0 0 auto;   /* ← Фиксированный размер */
+  width: 50%;
+  max-width: 100%;
+  height: auto;
   object-fit: contain;
-  position: absolute;     /* ← ФИКС СТИКЕР! */
-  bottom: 72px;          /* ← 72px от низа (под стикером место для ставок) */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
+  margin: 8px 0;
 }
 
-.side-player-bets {
-  position: absolute; 
-  left: 8px; right: 8px; 
-  bottom: 8px;           /* ← Привязка к низу */
-  height: 72px; 
-  z-index: 10; 
-  opacity: 0; 
+.side-player-bets { /* 3. СТАВКИ (72px ФИКС!) */
+  flex: 0 0 72px;   /* ← ТОЧНО 72px! */
+  width: calc(100% - 16px);
+  margin: 0 8px 8px 8px;
+  opacity: 0;
   transition: opacity 0.3s ease;
+  z-index: 10;
 }
 
-.side-player-bets:not(.hidden) { opacity: 1; }
+.side-player-bets:not(.hidden) {
+  opacity: 1;
+}
 
 .bets-container {
-  height: 100%; border-radius: 12px; background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);
-  overflow: hidden; display: flex; flex-direction: column; 
-  gap: 2px; padding: 6px; font-family: 'Roboto', sans-serif;
+  width: 100%;
+  height: 100%;      /* ← Заполняет 72px */
+  border-radius: 12px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  font-family: 'Roboto', sans-serif;
 }
 
+/* Остальные стили ставок БЕЗ ИЗМЕНЕНИЙ */
 .bet-list { height: 100%; display: flex; flex-direction: column; gap: 2px; }
-
-.bet-item {
-  display: flex; align-items: center; gap: 6px; padding: 4px 8px;
-  border-radius: 8px; background: rgba(255,255,255,0.08);
-  transition: all 0.25s cubic-bezier(0.4,0,0.2,1); font-weight: 900;
-}
-
-.bet-item .spinner {
-  width: 14px; height: 14px; flex-shrink: 0;
-  border: 2px solid rgba(255,255,255,0.2); border-top: 2px solid #4caf50;
-  border-radius: 50%; animation: spin 0.8s linear infinite;
-}
-
-.bet-item .table-number {
-  min-width: 36px; text-align: center; padding: 2px 6px; border-radius: 6px; font-weight: 900;
-}
-
-.bet-item .bet-amount {
-  min-width: 20px; text-align: center; color: #ffd700; font-weight: 900;
-}
-
+.bet-item { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; background: rgba(255,255,255,0.08); transition: all 0.25s cubic-bezier(0.4,0,0.2,1); font-weight: 900; }
+.bet-item .spinner { width: 14px; height: 14px; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.2); border-top: 2px solid #4caf50; border-radius: 50%; animation: spin 0.8s linear infinite; }
+.bet-item .table-number { min-width: 36px; text-align: center; padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+.bet-item .bet-amount { min-width: 20px; text-align: center; color: #ffd700; font-weight: 900; }
 .bet-item.first  { font-size: 16px; }
 .bet-item.second { font-size: 13px; opacity: 0.92; }
 .bet-item.later  { font-size: 11px; opacity: 0.85; }
-
-.bet-item.new-bet {
-  background: rgba(76,175,80,0.4) !important;
-  box-shadow: 0 0 12px rgba(76,175,80,0.6);
-  animation: newBetPulse 1.5s infinite;
-}
-
+.bet-item.new-bet { background: rgba(76,175,80,0.4) !important; box-shadow: 0 0 12px rgba(76,175,80,0.6); animation: newBetPulse 1.5s infinite; }
 .left-side-bets.test  .table-number, .right-side-bets.test .table-number { background: rgba(195,195,195,0.5); color: #C3C3C3; }
 .left-side-bets.cash  .table-number, .right-side-bets.cash .table-number { background: rgba(219,161,112,0.5); color: #DBA170; }
 .left-side-bets.ad    .table-number, .right-side-bets.ad   .table-number { background: rgba(255,85,85,0.5); color: #FF5555; }
-
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes newBetPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: 0.8; } }
 
