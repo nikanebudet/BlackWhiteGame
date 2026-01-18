@@ -1,131 +1,130 @@
-/* index.css - Version: 3.0.7 */
-/* ✅ СОРТИРОВКА + ДУБЛИ УДАЛЕНЫ + CSS GRID */
+/* ════════════════════════════════════════════════════ */
+/* index.css - Version: 3.1.0 - СТРУКТУРИРОВАННЫЙ     */
+/* ✅ РАЗБИЕН НА 9 БЛОКОВ ПО УКАЗАННОЙ СТРУКТУРЕ       */
+/* ════════════════════════════════════════════════════ */
 
+/* ════════════════════════════════════════════════════ */
+/* 0. ОБЩИЕ СТИЛИ                                      */
+/* ════════════════════════════════════════════════════ */
 * { box-sizing: border-box; }
 
 html {
-  height: 100vh; /* ✅ Контейнер для body */
-  overflow: hidden; /* ✅ На html, не на body */
+  height: 100vh;
+  overflow: hidden;
 }
-
 
 body {
-  margin: 0; background: #111; color: #fff; font-family: sans-serif;
-  max-width: 500px; min-width: 320px; height: 100vh !important; /* ✅ Фиксируем высоту */
+  margin: 0; 
+  background: #111; 
+  color: #fff; 
+  font-family: sans-serif;
+  max-width: 500px; 
+  min-width: 320px; 
+  height: 100vh !important;
   position: relative;
-  overflow: hidden; /* ✅ Полностью убираем скролл */ margin: auto;
+  overflow: hidden; 
+  margin: auto;
+}
+
+.wrap { 
+  display: flex; 
+  flex-direction: column; 
+  height: 100vh; 
+  position: relative; 
 }
 
 /* ════════════════════════════════════════════════════ */
-/* 1. ОСНОВНАЯ СТРУКТУРА */
+/* 1. ПАНЕЛЬ ОТЛАДКИ                                   */
 /* ════════════════════════════════════════════════════ */
-.wrap { display: flex; flex-direction: column; height: 100vh; position: relative; }
-
 .top-bar {
-  height: 7vh; background: #444; display: flex; align-items: center;
-  justify-content: flex-end; padding: 0 12px; font-size: 14px;
+  height: 7vh; 
+  background: #444; 
+  display: flex; 
+  align-items: center;
+  justify-content: flex-end; 
+  padding: 0 12px; 
+  font-size: 14px;
 }
 
-/* ════════════════════════════════════════════════════ */
-/* 2. КОНТРОЛЫ ТОП-БАРА */
-/* ════════════════════════════════════════════════════ */
-.top-controls { display: flex; align-items: center; gap: 8px; }
+.top-controls { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
 
-.random-CheckBox { display: flex; align-items: center; gap: 4px; }
-.random-label { opacity: 0.9; }
+.random-CheckBox { 
+  display: flex; 
+  align-items: center; 
+  gap: 4px; 
+}
+
+.random-label { 
+  opacity: 0.9; 
+}
+
 .random-max-input {
-  width: 40px; padding: 2px 4px; font-size: 12px; border-radius: 4px;
-  border: 1px solid #666; text-align: center; background: #333; color: #fff;
+  width: 40px; 
+  padding: 2px 4px; 
+  font-size: 12px; 
+  border-radius: 4px;
+  border: 1px solid #666; 
+  text-align: center; 
+  background: #333; 
+  color: #fff;
 }
 
-.switch { position: relative; display: inline-block; width: 36px; height: 18px; }
-.switch input { opacity: 0; width: 0; height: 0; }
+.switch { 
+  position: relative; 
+  display: inline-block; 
+  width: 36px; 
+  height: 18px; 
+}
+
+.switch input { 
+  opacity: 0; 
+  width: 0; 
+  height: 0; 
+}
+
 .slider {
-  position: absolute; cursor: pointer; inset: 0; background-color: #777;
-  border-radius: 18px; transition: 0.2s;
+  position: absolute; 
+  cursor: pointer; 
+  inset: 0; 
+  background-color: #777;
+  border-radius: 18px; 
+  transition: 0.2s;
 }
+
 .slider:before {
-  position: absolute; content: ""; height: 14px; width: 14px; left: 2px;
-  bottom: 2px; background-color: white; border-radius: 50%; transition: 0.2s;
+  position: absolute; 
+  content: ""; 
+  height: 14px; 
+  width: 14px; 
+  left: 2px;
+  bottom: 2px; 
+  background-color: white; 
+  border-radius: 50%; 
+  transition: 0.2s;
 }
-.switch input:checked + .slider { background-color: #4caf50; }
-.switch input:checked + .slider:before { transform: translateX(18px); }
 
-.show-random-CheckBox span { font-size: 12px; opacity: 0.9; }
+.switch input:checked + .slider { 
+  background-color: #4caf50; 
+}
 
-.tg-player-info {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; padding: 6px 10px; 
-  background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(0,255,0,0.1));
-  border: 1px solid #4caf50; border-radius: 20px;
-  backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(76,175,80,0.3);
-  transition: all 0.3s ease;
+.switch input:checked + .slider:before { 
+  transform: translateX(18px); 
 }
-.tg-avatar {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 2px solid #4caf50; object-fit: cover;
+
+.show-random-CheckBox span { 
+  font-size: 12px; 
+  opacity: 0.9; 
 }
-.tg-text { display: flex; flex-direction: column; line-height: 1.1; }
-.tg-id { color: #4caf50; font-weight: 900; font-size: 11px; }
-.tg-nickname { color: #fff; opacity: 0.9; font-size: 12px; }
-.tg-player-info.hidden { opacity: 0.3; transform: scale(1.0); }
-.tg-player-info:hover { transform: scale(1.00); box-shadow: 0 6px 20px rgba(76,175,80,0.4); }
 
 /* ════════════════════════════════════════════════════ */
-/* 3. INFO-GAME (центр экрана) */
+/* 2. ИНФО БАР ИГРОВОГО ПОЛЯ                           */
 /* ════════════════════════════════════════════════════ */
-.info-game {
-  position: absolute; top: 7vh; left: 50%; transform: translateX(-50%);
-  width: 100%; display: flex; flex-direction: column; align-items: center;
-  justify-content: flex-start; z-index: 10; pointer-events: none; padding: 10px 0;
-}
-.info-game::before {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
-  z-index: -1;
-}
 
-.time {
-  font-family: "Roboto", sans-serif; font-weight: 100; line-height: 1;
-  width: 33vw; max-width: 25vw; font-size: clamp(10vh, 13vh, 10vh);
-  text-align: center; margin-bottom: 0vh;
-}
-
-/*.board-number {
-  position: absolute; top: 10px; right: 10px; font-size: 4vh; font-weight: 400;
-  opacity: 0.9; padding: 6px 10px; border-radius: 20px; z-index: 15;
-  font-family: "Roboto", sans-serif; pointer-events: none;
-}*/
-
-.bets {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  gap: 2vw; width: 90%; margin-top: -14px;
-  filter: drop-shadow(0.12vh 0.3vh 0.4vh rgba(0, 0, 0, 0.6));
-  cursor: pointer; /* ✅ Курсор */
-  transition: transform 0.1s;
-}
-.bets:hover {
-  transform: scale(1.01); /* ✅ Лёгкая анимация */
-}
-
-.bets-icon, .bets-value {
-  pointer-events: auto !important; /* ✅ Разрешаем клики */
-}
-.bets-left-percent, .bets-right-percent {
-  font-family: "Roboto", sans-serif; font-weight: 900; font-size: 5vh; opacity: 0.9;
-}
-.bets-left-percent { color: #f8a624; }
-.bets-right-percent { color: #5dadec; }
-.bets-left-percent.hidden, .bets-right-percent.hidden { visibility: hidden; }
-
-.bets-icon { width: auto; height: clamp(11vh, 8vh, 15vh); }
-.bets-value {
-  font-family: "Roboto", sans-serif; font-weight: 900; font-size: clamp(15vh, 13vh, 18vh);
-  line-height: 1;
-  cursor: pointer; /* ✅ Курсор */
-}
-/* ИНФО-БАР - ТРИ СТРОЧКИ НОМЕРОВ СТОЛОВ */
-/* ✅ ВЕРНУТЬ старое позиционирование + 3 лиги */
+/* 2.1. НОМЕРА СТОЛОВ */
 .board-numbers {
   position: absolute !important;
   top: 10px !important; 
@@ -133,7 +132,7 @@ body {
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-  cursor: pointer !important; /* ✅ Курсор */
+  cursor: pointer !important;
   z-index: 15 !important;
 }
 
@@ -152,235 +151,601 @@ body {
 }
 
 /* Цвета лиг */
-.board-number.test { background: rgba(168, 168, 168, 0.2); color: #C3C3C3; }
-.board-number.cash { background: rgba(214, 148, 97, 0.2); color: #DBA170; }
-.board-number.ad { background: rgba(255, 45, 45, 0.2); color: #FF5555; }
+.board-number.test { 
+  background: rgba(168, 168, 168, 0.2); 
+  color: #C3C3C3; 
+}
 
-/* Активная лига */
+.board-number.cash { 
+  background: rgba(214, 148, 97, 0.2); 
+  color: #DBA170; 
+}
+
+.board-number.ad { 
+  background: rgba(255, 45, 45, 0.2); 
+  color: #FF5555; 
+}
+
 .board-number.active-league {
   opacity: 1 !important;
-  /*transform: scale(1.05) !important;
-  font-size: 16px !important;
-  font-weight: 900 !important;*/
   box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
 }
 
+/* 2.2. ТАЙМЕР */
+.time {
+  font-family: "Roboto", sans-serif; 
+  font-weight: 100; 
+  line-height: 1;
+  width: 33vw; 
+  max-width: 25vw; 
+  font-size: clamp(10vh, 13vh, 10vh);
+  text-align: center; 
+  margin-bottom: 0vh;
+}
 
+/* 2.3. ОБЩЕЕ КОЛИЧЕСТВО БИЛЕТОВ */
+.info-game {
+  position: absolute; 
+  top: 7vh; 
+  left: 50%; 
+  transform: translateX(-50%);
+  width: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  justify-content: flex-start; 
+  z-index: 10; 
+  pointer-events: none; 
+  padding: 10px 0;
+}
+
+.info-game::before {
+  content: ""; 
+  position: absolute; 
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  z-index: -1;
+}
+
+.bets {
+  position: relative; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 2vw; 
+  width: 90%; 
+  margin-top: -14px;
+  filter: drop-shadow(0.12vh 0.3vh 0.4vh rgba(0, 0, 0, 0.6));
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.bets:hover {
+  transform: scale(1.01);
+}
+
+.bets-icon, .bets-value {
+  pointer-events: auto !important;
+}
 
 /* ════════════════════════════════════════════════════ */
-/* 4. ИГРОВОЕ ПОЛЕ */
+/* 3. ИГРОВОЕ ПОЛЕ                                     */
 /* ════════════════════════════════════════════════════ */
+
+/* 3.1. СТОРОНЫ ПОЛЯ ОБЩИЙ ПОРЯДОК */
 .sides {
-  position: relative; flex: none !important;  /* ✅ Flex растянет идеально */ display: flex; max-width: 500px;
-  /*padding-bottom: 120px;*/ 
-  
-  height: calc(100vh - 7vh - 8vh - 8vh); /* ✅ Убираем фиксированную высоту */
+  position: relative; 
+  flex: none !important; 
+  display: flex; 
+  max-width: 500px;
+  height: calc(100vh - 7vh - 8vh - 8vh);
 }
 
 .side {
-  flex: 1; display: flex; flex-direction: column; align-items: stretch;
-  justify-content: stretch; cursor: pointer; transition: all 0.2s; position: relative;
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: stretch;
+  justify-content: stretch; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+  position: relative;
   max-width: 250px;
 }
-.left {  background: #fff; }
-.right { background: #000; }
-.side.winner { filter: brightness(1.2); box-shadow: inset 0 0 0 8px #4caf50; }
 
-.side-inner { display: flex; flex-direction: column; width: 100%; height: 100%; }
+.left { background: #fff; }
+.right { background: #000; }
+
+.side.winner { 
+  filter: brightness(1.2); 
+  box-shadow: inset 0 0 0 8px #4caf50; 
+}
+
+.side-inner { 
+  display: flex; 
+  flex-direction: column; 
+  width: 100%; 
+  height: 100%; 
+}
+
 .side-gap { flex: 1 0 0; }
 .side-gap-down {}
+
+/* 3.2. ПРОЦЕНТ + КОЛИЧЕСТВО БИЛЕТОВ */
 .side-content {
-  flex: 2 0 0; display: flex; flex-direction: column; align-items: center;
-  justify-content: space-between; gap: 0px; height: 100%; padding: 8px 0;
+  flex: 2 0 0; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  justify-content: space-between; 
+  gap: 0px; 
+  height: 100%; 
+  padding: 8px 0;
 }
 
 .side-results {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; width: 100%;
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center; 
+  width: 100%;
 }
+
 .side-final-bets {
-  opacity: 0.95; 
-  display: flex;           /* ✅ flex (не inline-flex) */
-  flex-direction: column;  /* ✅ ВЕРТИКАЛЬНО! */
-  align-items: center;     /* ✅ По центру */
-  gap: 0px;               /* ✅ Маленький вертикальный отступ */
+  opacity: 0.95;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0px;
 }
-.side-final-bets.hidden { display: none; }
+
+.side-final-bets.hidden { 
+  display: none; 
+}
+
 .side-final-bets-value {
-  font-family: "Roboto", sans-serif; font-weight: 900; font-size: 10vh; line-height: 1;
+  font-family: "Roboto", sans-serif; 
+  font-weight: 900; 
+  font-size: 10vh; 
+  line-height: 1;
 }
 
-.sticker { width: 50%; max-width: 100%; height: auto; object-fit: contain; }
-
-.side-player-bets {
-  flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;
-}
-.side-taps {
-  opacity: 0.9; display: inline-flex; align-items: center;
-  justify-content: center; gap: 2.5vh;
-}
-.side-taps.hidden { visibility: hidden; }
-.side-taps-value {
-  font-family: "Roboto", sans-serif; font-weight: 900; font-size: 11vh; line-height: 1;
-}
-
-/* ✅ ДОБАВИТЬ стили для кликабельных элементов */
-.tickets-balance, .bets, .tickets-value, .bets-value, .bets-icon {
-  pointer-events: auto !important;
-  position: relative;
-  z-index: 11;
-}
-
-.board-number, .tickets-value, .tickets-balance {
-  pointer-events: auto !important;
-  cursor: pointer !important;
-}
-
-/* Анимация при наведении */
-.board-number:hover, .tickets-value:hover {
-  opacity: 1 !important;
-  /*transform: scale(1.05);*/
+/* 3.3. СТИКЕРЫ НА СТОРОНАХ */
+.sticker { 
+  width: 50%; 
+  max-width: 100%; 
+  height: auto; 
+  object-fit: contain; 
 }
 
 /* ════════════════════════════════════════════════════ */
-/* 5. НИЖНИЕ ПАНЕЛИ (CSS GRID) */
+/* 4. ПАНЕЛЬ БАЛАНСОВ ИГРОКА                           */
 /* ════════════════════════════════════════════════════ */
-/* 5. НИЖНИЕ ПАНЕЛИ (CSS GRID - 3 ПАНЕЛИ) */
-.bottom-bars {
-  position: fixed !important; bottom: 0; left: 0; right: 0; max-width: 500px; min-width: 320px; margin: 0 auto;
-  display: grid; 
-  grid-template-rows: 7vh 8vh 8vh;     /* ⭐ 3 строки! */
-  gap: 0; height: 23vh; z-index: 20;
-}
-
-.player-balance-bar { grid-row: 1; }
-.super-prizes-bar { grid-row: 2; }
-.menu-bar { grid-row: 3; }
-
 .player-balance-bar {
+  grid-row: 1;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
-  display: flex; justify-content: space-between; padding: 0 20px; align-items: center;
+  display: flex; 
+  justify-content: space-between; 
+  padding: 0 20px; 
+  align-items: center;
+  position: absolute;
 }
+
 .player-balance-bar::before {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); z-index: -1;
+  content: ""; 
+  position: absolute; 
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); 
+  z-index: -1;
 }
 
-.player-balance, .tickets-balance { font-size: 4vh; opacity: 0.9; }
+.player-balance, .tickets-balance { 
+  font-size: 4vh; 
+  opacity: 0.9; 
+}
+
 .tickets-balance {
-  cursor: pointer; display: flex; align-items: center; gap: 4px;
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  gap: 4px;
 }
-.tickets-balance:hover, .tickets-balance.active-league { border-radius: 8px; padding: 2px; }
-.tickets-value.clickable { font-weight: 700; }
-.tickets-icon-small { height: 5vh; }
 
+.tickets-balance:hover, .tickets-balance.active-league { 
+  border-radius: 8px; 
+  padding: 2px; 
+}
+
+.tickets-value.clickable { 
+  font-weight: 700; 
+}
+
+.tickets-icon-small { 
+  height: 5vh; 
+}
+
+/* ════════════════════════════════════════════════════ */
+/* 5. ПАНЕЛЬ ДЖЕКПОТА                                  */
+/* ════════════════════════════════════════════════════ */
 .super-prizes-bar {
-  height: 8vh; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px);
-  display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
-  overflow: hidden; color: #4caf50;
+  grid-row: 2;
+  height: 8vh; 
+  background: rgba(20, 20, 20, 0.95); 
+  backdrop-filter: blur(10px);
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  padding: 0 16px;
+  overflow: hidden; 
+  color: #4caf50;
 }
+
 .super-prizes-bar .message {
-  font-size: 16px; font-weight: 600; flex: 1; margin-right: 8px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 16px; 
+  font-weight: 600; 
+  flex: 1; 
+  margin-right: 8px;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
 }
+
 #nextButton {
-  padding: 6px 12px; border: none; background: #4caf50; color: #fff; 
-  font-size: 13px; cursor: pointer; border-radius: 4px; flex-shrink: 0;
+  padding: 6px 12px; 
+  border: none; 
+  background: #4caf50; 
+  color: #fff; 
+  font-size: 13px; 
+  cursor: pointer; 
+  border-radius: 4px; 
+  flex-shrink: 0;
 }
-#nextButton:disabled { background: #555; cursor: default; }
 
+#nextButton:disabled { 
+  background: #555; 
+  cursor: default; 
+}
+
+/* ════════════════════════════════════════════════════ */
+/* 6. МЕНЮ                                             */
+/* ════════════════════════════════════════════════════ */
 .menu-bar { 
-  background: #222; display: flex !important; justify-content: space-around; 
-  align-items: center; padding: 8px 0; height: 8vh;
+  grid-row: 3;
+  background: #222; 
+  display: flex !important; 
+  justify-content: space-around; 
+  align-items: center; 
+  padding: 8px 0; 
+  height: 8vh;
 }
+
 .menu-icon {
-	height: 5vh;
+  height: 5vh;
 }
 
-
 /* ════════════════════════════════════════════════════ */
-/* 6. МОДАЛКА ЛИГ */
+/* 7. МОДАЛЬНЫЕ ОКНА                                   */
 /* ════════════════════════════════════════════════════ */
-/* 6. МОДАЛКА ЛИГ - НОВЫЙ ДИЗАЙН */
 .league-modal {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center;
-  z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  z-index: 1000; 
+  opacity: 0; 
+  visibility: hidden; 
+  transition: all 0.3s ease;
 }
-.league-modal.active { opacity: 1; visibility: visible; }
+
+.league-modal.active { 
+  opacity: 1; 
+  visibility: visible; 
+}
 
 .league-modal-content {
-  background: #222; border: 2px solid #440973; border-radius: 20px; padding: 20px;
-  max-width: 350px; width: 90%; box-shadow: 0 20px 40px rgb(65 9 98 / 80%);
+  background: #222; 
+  border: 2px solid #440973; 
+  border-radius: 20px; 
+  padding: 20px;
+  max-width: 350px; 
+  width: 90%; 
+  box-shadow: 0 20px 40px rgb(65 9 98 / 80%);
 }
 
 .league-buttons { 
-  display: flex; flex-direction: column; gap: 25px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 25px; 
 }
 
 .league-btn {
-  display: flex; align-items: center; gap: 25px;
-  padding: 16px 25px; border: none; border-radius: 12px;
-  cursor: pointer; transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); height: 70px;
-  font-size: 7vh; font-weight: 900; overflow: hidden; position: relative;
-  
-  /* ⭐ ОСНОВА - ЛЕГКИЙ ВЫСТУП */
+  display: flex; 
+  align-items: center; 
+  gap: 25px;
+  padding: 16px 25px; 
+  border: none; 
+  border-radius: 12px;
+  cursor: pointer; 
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); 
+  height: 70px;
+  font-size: 7vh; 
+  font-weight: 900; 
+  overflow: hidden; 
+  position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .league-icon {
-  width: 50px; height: 50px; flex-shrink: 0;
+  width: 50px; 
+  height: 50px; 
+  flex-shrink: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-/*.league-text {
-  flex: 1; display: flex; flex-direction: column; 
-  text-align: left; min-width: 0;
-}
-
-.league-name {
-  font-size: 18px; font-weight: 700; margin-bottom: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;*/
-}
-
 .league-tickets {
-  font-size: 24px; opacity: 0.9; font-weight: 900;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 24px; 
+  opacity: 0.9; 
+  font-weight: 900;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
 }
 
-/* ЦВЕТА ЛИГ */
+/* Цвета лиг модалки */
 .league-btn.test { 
   background: linear-gradient(135deg, #C3C3C3, #A8A8A8); 
   color: white; 
 }
+
 .league-btn.cash { 
   background: linear-gradient(135deg, #DBA170, #D69461); 
   color: white; 
 }
+
 .league-btn.ad { 
   background: linear-gradient(135deg, #FF5555, #FF2D2D); 
   color: white; 
 }
 
+/* ════════════════════════════════════════════════════ */
+/* 8. ПЕРЕКЛЮЧЕНИЯ                                     */
+/* ════════════════════════════════════════════════════ */
+.tg-player-info {
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  font-size: 12px; 
+  padding: 6px 10px; 
+  background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(0,255,0,0.1));
+  border: 1px solid #4caf50; 
+  border-radius: 20px;
+  backdrop-filter: blur(10px); 
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+  transition: all 0.3s ease;
+}
+
+.tg-avatar {
+  width: 28px; 
+  height: 28px; 
+  border-radius: 50%;
+  border: 2px solid #4caf50; 
+  object-fit: cover;
+}
+
+.tg-text { 
+  display: flex; 
+  flex-direction: column; 
+  line-height: 1.1; 
+}
+
+.tg-id { 
+  color: #4caf50; 
+  font-weight: 900; 
+  font-size: 11px; 
+}
+
+.tg-nickname { 
+  color: #fff; 
+  opacity: 0.9; 
+  font-size: 12px; 
+}
+
+.tg-player-info.hidden { 
+  opacity: 0.3; 
+  transform: scale(1.0); 
+}
+
+.tg-player-info:hover { 
+  transform: scale(1.00); 
+  box-shadow: 0 6px 20px rgba(76,175,80,0.4); 
+}
+
+.tables-info-bar {
+  position: absolute; 
+  top: 10px; 
+  left: 50%; 
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8); 
+  padding: 8px 16px; 
+  border-radius: 20px;
+  display: flex; 
+  gap: 16px; 
+  font-weight: 700; 
+  z-index: 100;
+}
+
+.prize-tables { 
+  color: #ffd700; 
+}
+
+.range-tables { 
+  color: rgba(255,255,255,0.4); 
+  font-size: 14px; 
+}
+
+/* ════════════════════════════════════════════════════ */
+/* 9. ПРОГРЕССИВНЫЕ СТАВКИ + АНИМАЦИИ                  */
+/* ════════════════════════════════════════════════════ */
+.side-player-bets {
+  position: relative; 
+  height: 100%; 
+  overflow: hidden;
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
+  padding: 8px;
+}
+
+.bets-container {
+  flex: 1; 
+  position: relative; 
+  overflow: hidden;
+  border-radius: 16px; 
+  background: rgba(76,175,80,0.15);
+  backdrop-filter: blur(12px); 
+  border: 1px solid rgba(76,175,80,0.4);
+}
+
+.bet-loader {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  padding: 12px; 
+  color: #4caf50; 
+  font-weight: 600;
+}
+
+.spinner {
+  width: 24px; 
+  height: 24px; 
+  border: 3px solid rgba(76,175,80,0.3);
+  border-top: 3px solid #4caf50; 
+  border-radius: 50%; 
+  animation: spin 1s linear infinite; 
+  margin-bottom: 6px;
+}
+
+@keyframes spin { 
+  0% { transform: rotate(0deg); } 
+  100% { transform: rotate(360deg); } 
+}
+
+.bet-main-display {
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  gap: 8px;
+  padding: 20px; 
+  font-weight: 900; 
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.table-number { 
+  font-size: 28px; 
+  color: rgba(255,255,255,0.3);
+  background: rgba(0,0,0,0.4); 
+  padding: 4px 8px; 
+  border-radius: 8px;
+}
+
+.bet-amount { 
+  font-size: 36px; 
+  color: #fff; 
+}
+
+.bet-list {
+  height: 100%; 
+  overflow-y: auto; 
+  padding: 8px; 
+  scroll-behavior: smooth; 
+  position: relative;
+}
+
+.bet-list::-webkit-scrollbar { 
+  width: 0; 
+}
+
+.bet-list::after {
+  content: ''; 
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  height: 40px;
+  background: linear-gradient(transparent, rgba(76,175,80,0.2) 100%);
+  pointer-events: none;
+}
+
+.bet-item.first { 
+  font-size: 20px; 
+  font-weight: 700; 
+}
+
+.bet-item.second { 
+  font-size: 14px; 
+  opacity: 0.9; 
+}
+
+.bet-item.later { 
+  font-size: 12px; 
+  opacity: 0.7; 
+  margin-bottom: 2px; 
+}
+
+.bets-left-percent, .bets-right-percent {
+  font-family: "Roboto", sans-serif; 
+  font-weight: 900; 
+  font-size: 5vh; 
+  opacity: 0.9;
+}
+
+.bets-left-percent { 
+  color: #f8a624; 
+}
+
+.bets-right-percent { 
+  color: #5dadec; 
+}
+
+.bets-left-percent.hidden, .bets-right-percent.hidden { 
+  visibility: hidden; 
+}
+
+.bets-icon { 
+  width: auto; 
+  height: clamp(11vh, 8vh, 15vh); 
+}
+
+.bets-value {
+  font-family: "Roboto", sans-serif; 
+  font-weight: 900; 
+  font-size: clamp(15vh, 13vh, 18vh);
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Стили модалки лиг */
 .league-btn:hover { 
   transform: scale(1.01);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 .league-btn.active { 
-  transform: translateY(4px) scale(0.99);  /* 🎮 ГЛУБОКО ПРОДАВЛЕНА */
+  transform: translateY(4px) scale(0.99);
   box-shadow: 
-    /* СНАРУЖИ */
-    0 2px 6px rgba(0, 0, 0, 0.8), 
-    
-    /* ВНУТРИ - 4-СТОРОННИЙ ОБЪЁМ */
-    inset 0 4px 8px rgba(255, 255, 255, 0.3),     /* ✨ ВЕРХНИЙ БЛИК */
-    inset 0 -4px 8px rgba(0, 0, 0, 0.4),          /* 🖤 НИЖНЯЯ ТЕНЬ */
-    inset -4px 0 8px rgba(255, 255, 255, 0.2),    /* ✨ ЛЕВЫЙ БЛИК */
-    inset 4px 0 8px rgba(0, 0, 0, 0.3);           /* 🖤 ПРАВЫЙ КОНТУР */
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    inset 0 4px 8px rgba(255, 255, 255, 0.3),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.4),
+    inset -4px 0 8px rgba(255, 255, 255, 0.2),
+    inset 4px 0 8px rgba(0, 0, 0, 0.3);
 }
 
-/* МОДАЛКА ЛИГ - БЛОКИРОВКА */
 .league-btn.disabled {
   cursor: not-allowed !important;
   opacity: 0.5;
@@ -391,7 +756,6 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* МОДАЛКА - КАСТОМНЫЕ ЦВЕТА ЛИГ */
 .league-modal.league-test .league-modal-content {
   border: 3px solid #C3C3C3;
   box-shadow: 0 0 20px rgba(163, 163, 163, 0.5), 
@@ -410,7 +774,6 @@ body {
               0 0 40px rgba(255, 85, 85, 0.4);
 }
 
-/* Градиентные фоны модалки */
 .league-modal.league-test {
   background: linear-gradient(135deg, rgba(195, 195, 195, 0.2), rgba(168, 168, 168, 0.1));
 }
@@ -423,18 +786,51 @@ body {
   background: linear-gradient(135deg, rgba(255, 85, 85, 0.25), rgba(255, 45, 45, 0.15));
 }
 
-/* ════════════════════════════════════════════════════ */
-/* 7. АНИМАЦИИ И МЕДИА */
-/* ════════════════════════════════════════════════════ */
+/* Анимации */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 0.85; transform: translateY(0); }
 }
-.side-taps:not(.hidden) { animation: fadeInUp 0.3s ease; }
-.side.winner .side-taps { opacity: 1 !important; text-shadow: 0 0 10px #4caf50; }
 
+.side-taps:not(.hidden) { 
+  animation: fadeInUp 0.3s ease; 
+}
+
+.side.winner .side-taps { 
+  opacity: 1 !important; 
+  text-shadow: 0 0 10px #4caf50; 
+}
+
+/* Общие кликабельные элементы */
+.tickets-balance, .bets, .tickets-value, .bets-value, .bets-icon,
+.board-number, .tickets-value, .tickets-balance {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.board-number:hover, .tickets-value:hover {
+  opacity: 1 !important;
+}
+
+/* Медиа-запросы */
 @media (max-width: 400px) {
   .bets-value { font-size: 15vh; }
   .bets-left-percent, .bets-right-percent { font-size: 6vh; }
   .side-taps-value { font-size: 13vh; }
+}
+
+/* CSS GRID для нижних панелей */
+.bottom-bars {
+  position: fixed !important; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  max-width: 500px; 
+  min-width: 320px; 
+  margin: 0 auto;
+  display: grid; 
+  grid-template-rows: 7vh 8vh 8vh;
+  gap: 0; 
+  height: 23vh; 
+  z-index: 20;
 }

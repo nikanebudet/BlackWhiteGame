@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Version: 3.0.5 - Блоки в указанном порядке -->
+<!-- Version: 3.1. - Блоки в указанном порядке + ПРОГРЕССИВНЫЕ СТАВКИ -->
 <html>
   <head>
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -7,10 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Black vs White</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;700;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css" />
 	
     <style>
@@ -47,6 +44,13 @@
           </label>
         </div>
       </div>
+		
+		<!-- ⭐ ИНФОБАР СТОЛОВ (ПРИЗОВЫЕ + ДИАПАЗОН) -->
+		<div class="tables-info-bar">
+		  <div class="prize-tables" id="prizeTables">1000 2000 3000 ...</div>
+		  <div class="range-tables">[001...999]</div>
+		</div>
+
 		<!-- 1. ВЕРХ - результаты прошлого раунда панель для показать -->
 		<div class="pull-zone-top">
 		<div class="pull-handle-top">
@@ -58,8 +62,7 @@
 		
       <!-- INFO-GAME (центр экрана) -->
       <div class="info-game">
-
-		<!-- Номера столов во всех лигах сейчас играются -->
+        <!-- Номера столов во всех лигах сейчас играются -->
         <div class="board-numbers" id="boardNumbers">
 			<div class="board-number-row">
 			  <span class="board-number test" data-league="test">#1</span>
@@ -84,30 +87,39 @@
 
       <!-- ИГРОВОЕ ПОЛЕ -->
       <div class="sides">
-	  
         <!-- ЛЕВАЯ СТОРОНА -->
         <div class="side left" id="leftSide">
           <div class="side-inner">
             <div class="side-gap"></div>
             <div class="side-content">
-			
-              <!-- 1. РЕЗУЛЬТАТЫ НАВЕРХУ — Левая сторона [СКРЫТО → КОНЕЦ: ПОКАЗАТЬ] -->
+              <!-- ✅ РЕЗУЛЬТАТЫ [ОСТАЮТСЯ] -->
               <div class="side-results">
                 <div class="side-final-bets hidden" id="leftFinalBets">
-				  <!-- Проценты ЛЕВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
-					<span class="bets-left-percent hidden" id="leftPercent">0%</span>
-				<!-- Билеты ЛЕВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
+                  <span class="bets-left-percent hidden" id="leftPercent">0%</span>
                   <span class="side-final-bets-value" id="leftFinalBetsValue">0</span>
                 </div>
               </div>
 
-              <!-- 2. СТИКЕР Левой стороны(ВСЕГДА) -->
+              <!-- ✅ СТИКЕР (ВСЕГДА) -->
               <img src="./pic/stikers/4.1 fire.svg" class="sticker" alt="Fire" />
 
-              <!-- 3. ЛИЧНЫЕ СТАВКИ [НАЧАЛО: СКРЫТО → КОНЕЦ: ПОКАЗАТЬ] -->
-              <div class="side-player-bets">
-                <div class="side-taps hidden" id="leftTaps">
-                  <span class="side-taps-value" id="leftTapsValue">0</span>
+              <!-- ⭐ ПРОГРЕССИВНЫЕ СТАВКИ ЛЕВО (НОВЫЙ UI) -->
+              <div class="side-player-bets left-side-bets">
+                <div class="bets-container">
+                  <!-- ЛОАДИНГ КРУТИЛКА -->
+                  <div id="leftBetLoader" class="bet-loader hidden">
+                    <div class="spinner"></div>
+                    <span>Распределение...</span>
+                  </div>
+                  <!-- ПЕРВАЯ СТАВКА (КРУПНЫЙ ШРИФТ) -->
+                  <div id="leftBetMain" class="bet-main-display hidden">
+                    <span class="table-number">#127</span>
+                    <span class="bet-amount">1</span>
+                  </div>
+                  <!-- СПИСОК СТАВОК (2+ ставки) -->
+                  <div id="leftBetList" class="bet-list hidden">
+                    <!-- Динамически заполняется JS -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -120,24 +132,34 @@
           <div class="side-inner">
             <div class="side-gap"></div>
             <div class="side-content">
-			
-              <!-- 1. РЕЗУЛЬТАТЫ НАВЕРХУ Правой стороны -->
+              <!-- ✅ РЕЗУЛЬТАТЫ -->
               <div class="side-results">
                 <div class="side-final-bets hidden" id="rightFinalBets">
-				<!-- Проценты ПРАВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->
-				  <span class="bets-right-percent hidden" id="rightPercent">0%</span>
-				<!-- Билеты ПРАВО [СКРЫТЫ → КОНЕЦ: ПОКАЗАТЬ] -->  
+                  <span class="bets-right-percent hidden" id="rightPercent">0%</span>
                   <span class="side-final-bets-value" id="rightFinalBetsValue">0</span>
                 </div>
               </div>
 
-              <!-- 2. СТИКЕР Правой стороны-->
+              <!-- ✅ СТИКЕР -->
               <img src="./pic/stikers/4.2 water.svg" class="sticker" alt="Water"/>
 
-              <!-- 3. ЛИЧНЫЕ СТАВКИ -->
-              <div class="side-player-bets">
-                <div class="side-taps hidden" id="rightTaps">
-                  <span class="side-taps-value" id="rightTapsValue">0</span>
+              <!-- ⭐ ПРОГРЕССИВНЫЕ СТАВКИ ПРАВО (НОВЫЙ UI) -->
+              <div class="side-player-bets right-side-bets">
+                <div class="bets-container">
+                  <!-- ЛОАДИНГ КРУТИЛКА -->
+                  <div id="rightBetLoader" class="bet-loader hidden">
+                    <div class="spinner"></div>
+                    <span>Распределение...</span>
+                  </div>
+                  <!-- ПЕРВАЯ СТАВКА (КРУПНЫЙ ШРИФТ) -->
+                  <div id="rightBetMain" class="bet-main-display hidden">
+                    <span class="table-number">#127</span>
+                    <span class="bet-amount">1</span>
+                  </div>
+                  <!-- СПИСОК СТАВОК (2+ ставки) -->
+                  <div id="rightBetList" class="bet-list hidden">
+                    <!-- Динамически заполняется JS -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -156,7 +178,6 @@
 			<span class="tickets-value clickable" id="ticketsValueDisplay">100</span>
 		</div>
 	  </div>
-
 
 		  <!-- 2. НИЗ - суперпризы (над .super-prizes-bar) — Плашка -->
 				<div class="pull-handle-bottom">
@@ -183,6 +204,7 @@
       </div>
 		</div>
     </div>
+
 	<!-- МОДАЛКА ЛИГ - НОВЫЙ ДИЗАЙН -->
 	<div id="leagueModal" class="league-modal">
 	  <div class="league-modal-content">
@@ -207,5 +229,6 @@
 
   <script src="auth-check.js"></script>  <!-- 1. Проверка TG (1 сек) -->
   <script src="player.js"></script>      <!-- 2. TG Player данные -->
-  <script src="index.js"></script>       <!-- 3. ИГРА -->  </body>
+  <script src="index.js"></script>       <!-- 3. ИГРА -->  
+  </body>
 </html>
