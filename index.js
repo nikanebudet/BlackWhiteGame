@@ -465,63 +465,33 @@ const ROUND = {
 //═══════════════════════════════════════════════════════
 // 10. ПРОГРЕССИВНЫЕ СТАВКИ
 //═══════════════════════════════════════════════════════
-function showBetLoading(side) {
-  const loader = document.getElementById(`${side}BetLoader`);
-  const main = document.getElementById(`${side}BetMain`);
-  const list = document.getElementById(`${side}BetList`);
-
-  loader?.classList.remove('hidden');
-  main?.classList.add('hidden');
-  list?.classList.add('hidden');
-}
-
-function showFirstBet(side, tableId) {
-  const loader = document.getElementById(`${side}BetLoader`);
-  const main = document.getElementById(`${side}BetMain`);
-  const list = document.getElementById(`${side}BetList`);
-  const tableNum = main?.querySelector('.table-number');
-  const betAmt = main?.querySelector('.bet-amount');
-
-  loader?.classList.add('hidden');
-  main?.classList.remove('hidden');
-  list?.classList.add('hidden');
-
-  tableNum.textContent = `#${tableId.toString().padStart(3, '0')}`;
-  betAmt.textContent = '1';
-}
-
-function addBetToList(side, tableId, amount, betIndex) {
-  const list = document.getElementById(`${side}BetList`);
-  const betItem = document.createElement('div');
-  betItem.className = `bet-item ${betIndex === 1 ? 'first' : betIndex === 2 ? 'second' : 'later'}`;
-  betItem.innerHTML = `#${tableId.toString().padStart(3, '0')}: ${amount}`;
-  betItem.style.cursor = 'grab';
-
-  list.appendChild(betItem);
-  list.scrollTop = list.scrollHeight;
-
-  if (betIndex >= 2) {
-    document.getElementById(`${side}BetMain`).classList.add('hidden');
-    list.classList.remove('hidden');
+function updateBetDisplay(side) {
+  const league = STATE.currentLeague;
+  const bets = side === 'left' ? STATE.playerBets.left : STATE.playerBets.right;
+  const betContainer = document.querySelector(`.${side}-side-bets`);
+  const betList = document.getElementById(`${side}BetList`);
+  
+  if (!betContainer || !betList) return;
+  
+  if (bets.length === 0) {
+    betContainer.classList.add('hidden');
+    return;
   }
-}
-
-function onBetSuccess(tableId, ticketsLeft, side) {
-  UTILS.setCurrentTicketsWhole(ticketsLeft);
-  UTILS.updateTicketsDisplay();
-
-  const betCount = (STATE.playerBets?.[side]?.length || 0) + 1;
-
-  if (betCount === 1) {
-    showFirstBet(side, tableId);
-  } else {
-    addBetToList(side, tableId, 1, betCount);
-  }
-
-  STATE.playerBets[side] = STATE.playerBets[side] || [];
-  STATE.playerBets[side].push({ tableId, amount: 1 });
-
-  COOKIE_MANAGER.saveAll();
+  
+  betContainer.classList.remove('hidden');
+  betContainer.className = `${side}-side-bets ${league}`;
+  betList.innerHTML = '';
+  
+  // НОВЫЕ СТАВКИ ВВЕРХУ (reverse + ограничение 3)
+  bets.slice(-3).reverse().forEach((tableId, index) => {
+    const betItem = document.createElement('div');
+    betItem.className = `bet-item ${index === 0 ? 'first' : index === 1 ? 'second' : 'later'}`;
+    betItem.innerHTML = `
+      <span class="table-number">#${tableId.toString().padStart(3, '0')}</span>
+      <span class="bet-amount">1</span>
+    `;
+    betList.appendChild(betItem);
+  });
 }
 
 //═══════════════════════════════════════════════════════
@@ -725,8 +695,10 @@ function handleLeftClick() {
   const ticketsToBet = 1;
   if (ticketsToBet <= UTILS.getCurrentTicketsWhole()) {
     STATE.playerLeftTickets[STATE.currentLeague] += ticketsToBet;
+    STATE.playerBets.left.unshift(LEAGUES[STATE.currentLeague].boardCurrent); // ← ДОБАВИТЬ
     UTILS.setCurrentTicketsWhole(UTILS.getCurrentTicketsWhole() - ticketsToBet);
     UTILS.updateTicketsDisplay();
+    updateBetDisplay('left');  // ← ДОБАВИТЬ
     updateDisplay();
     COOKIE_MANAGER.saveAll();
   }
@@ -739,8 +711,10 @@ function handleRightClick() {
   const ticketsToBet = 1;
   if (ticketsToBet <= UTILS.getCurrentTicketsWhole()) {
     STATE.playerRightTickets[STATE.currentLeague] += ticketsToBet;
+    STATE.playerBets.right.unshift(LEAGUES[STATE.currentLeague].boardCurrent); // ← ДОБАВИТЬ
     UTILS.setCurrentTicketsWhole(UTILS.getCurrentTicketsWhole() - ticketsToBet);
     UTILS.updateTicketsDisplay();
+    updateBetDisplay('right'); // ← ДОБАВИТЬ
     updateDisplay();
     COOKIE_MANAGER.saveAll();
   }
