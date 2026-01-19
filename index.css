@@ -324,20 +324,27 @@ body {
 /* ════════════════════════════════════════════════════ */
 .player-balance-bar {
   grid-row: 1;
+  position: absolute !important;
+  bottom: 16vh;        /* ← 8vh (суперпризы) + 8vh (меню) = 16vh */
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: 7vh;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
   display: flex; 
   justify-content: space-between; 
   padding: 0 20px; 
   align-items: center;
-  position: absolute;
+  border-radius: 0 !important; /* ← Без скругления по краям */
 }
 
 .player-balance-bar::before {
-  content: ""; 
+   content: '';
   position: absolute; 
   inset: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)); 
   z-index: -1;
+  border-radius: 0 !important;
 }
 
 .player-balance, .tickets-balance { 
