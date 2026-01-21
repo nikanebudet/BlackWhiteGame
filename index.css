@@ -319,6 +319,77 @@ body {
   object-fit: contain; 
 }
 
+/* Контейнер стороны: всегда столбец из 4 фикс‑рядов */
+.side-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+/* Общий класс ряда: не растёт и не сжимается по высоте */
+.side-row {
+  flex: 0 0 auto;   /* не растёт, не сжимается по высоте [web:81][web:83] */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 1. ПРОЦЕНТ – фиксированная высота */
+.side-row-percent {
+  height: 6vh;
+}
+
+/* 2. КОЛИЧЕСТВО БИЛЕТОВ – фиксированная высота */
+.side-row-bets-count {
+  height: 7vh;
+}
+
+/* 3. СТИКЕР – фиксированная зона под картинку */
+.side-row-sticker {
+  height: 18vh;           /* подгони под твой дизайн */
+}
+
+.sticker {
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+/* 4. СТАВКИ – ВСЕГДА ОДИН РАЗМЕР */
+.side-row-bets {
+  height: 72px;           /* фиксированная высота для поля ставок */
+  padding: 0 8px 8px;
+  box-sizing: border-box;
+}
+
+/* сам блок ставок просто растягивается внутрь этих 72px */
+.side-player-bets {
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.side-player-bets:not(.hidden) {
+  opacity: 1;
+}
+
+.bets-container {
+  height: 100%;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  font-family: 'Roboto', sans-serif;
+}
+
+
 /* ════════════════════════════════════════════════════ */
 /* 4. ПАНЕЛЬ БАЛАНСОВ ИГРОКА                           */
 /* ════════════════════════════════════════════════════ */

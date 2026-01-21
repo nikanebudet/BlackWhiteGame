@@ -86,25 +86,29 @@
         <div class="side left" id="leftSide">
           <div class="side-inner">
             <div class="side-gap"></div>
-            <div class="side-content">
-              <!-- ✅ РЕЗУЛЬТАТЫ [ОСТАЮТСЯ] -->
-              <div class="side-results">
-                <div class="side-final-bets hidden" id="leftFinalBets">
-                  <span class="bets-left-percent hidden" id="leftPercent">0%</span>
-                  <span class="side-final-bets-value" id="leftFinalBetsValue">0</span>
-                </div>
-              </div>
+			<div class="side-content">
+			  <!-- 1. ПРОЦЕНТ -->
+			  <div class="side-row side-row-percent">
+				<span class="bets-left-percent hidden" id="leftPercent">0%</span>
+			  </div>
 
-              <!-- ✅ СТИКЕР (ВСЕГДА) -->
-              <img src="./pic/stikers/4.1 fire.svg" class="sticker" alt="Fire" />
+			  <!-- 2. КОЛИЧЕСТВО БИЛЕТОВ -->
+			  <div class="side-row side-row-bets-count">
+				<span class="side-final-bets-value" id="leftFinalBetsValue">0</span>
+			  </div>
 
-              <!-- ПРОСТОЙ КОНТЕЙНЕР (без лоадеров/майна) -->
-			<div class="side-player-bets left-side-bets hidden">
-			  <div class="bets-container">
-				<div id="leftBetList" class="bet-list"></div>
+			  <!-- 3. СТИКЕР -->
+			  <div class="side-row side-row-sticker">
+				<img src="./pic/stikers/4.1 fire.svg" class="sticker" alt="Fire" />
+			  </div>
+
+			  <!-- 4. СТАВКИ -->
+			  <div class="side-row side-row-bets side-player-bets left-side-bets hidden">
+				<div class="bets-container">
+				  <div id="leftBetList" class="bet-list"></div>
+				</div>
 			  </div>
 			</div>
-            </div>
             <div class="side-gap-down"></div>
           </div>
         </div>
@@ -113,26 +117,29 @@
         <div class="side right" id="rightSide">
           <div class="side-inner">
             <div class="side-gap"></div>
-            <div class="side-content">
-              <!-- ✅ РЕЗУЛЬТАТЫ -->
-              <div class="side-results">
-                <div class="side-final-bets hidden" id="rightFinalBets">
-                  <span class="bets-right-percent hidden" id="rightPercent">0%</span>
-                  <span class="side-final-bets-value" id="rightFinalBetsValue">0</span>
-                </div>
-              </div>
+			<div class="side-content">
+			  <!-- 1. ПРОЦЕНТ -->
+			  <div class="side-row side-row-percent">
+				<span class="bets-right-percent hidden" id="rightPercent">0%</span>
+			  </div>
 
-              <!-- ✅ СТИКЕР -->
-              <img src="./pic/stikers/4.2 water.svg" class="sticker" alt="Water"/>
+			  <!-- 2. КОЛИЧЕСТВО БИЛЕТОВ -->
+			  <div class="side-row side-row-bets-count">
+				<span class="side-final-bets-value" id="rightFinalBetsValue">0</span>
+			  </div>
 
-              <!-- ПРОСТОЙ КОНТЕЙНЕР (без лоадеров/майна) -->
-			<div class="side-player-bets right-side-bets hidden">
-			  <div class="bets-container">
-				<div id="rightBetList" class="bet-list"></div>
+			  <!-- 3. СТИКЕР -->
+			  <div class="side-row side-row-sticker">
+				<img src="./pic/stikers/4.2 water.svg" class="sticker" alt="Water" />
+			  </div>
+
+			  <!-- 4. СТАВКИ -->
+			  <div class="side-row side-row-bets side-player-bets right-side-bets hidden">
+				<div class="bets-container">
+				  <div id="rightBetList" class="bet-list"></div>
+				</div>
 			  </div>
 			</div>
-
-            </div>
             <div class="side-gap-down"></div>
           </div>
         </div>
